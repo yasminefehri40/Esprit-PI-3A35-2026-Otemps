@@ -1,0 +1,296 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ event.titre }} - OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
+        .form-input, .form-textarea { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif; }
+        .form-input.error, .form-textarea.error { border-color: #ef4444; background-color: #fef2f2; }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .error-message { color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem; display: block; }
+        .alert { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .alert-error { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; font-size: 1rem; }
+        .btn-primary { background: linear-gradient(to right, #d97706, #ea580c); color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-title">
+                        <h1>OTEMPS - Admin</h1>
+                        <p>Modifier un événement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-container">
+            <div style="margin-bottom: 1.5rem;">
+                <a href="{{ path('admin_event_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Retour à la liste
+                </a>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; padding: 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #78350f; margin-bottom: 2rem;">Modifier l'événement</h2>
+
+                {% if errors is defined and errors|length > 0 %}
+                    <div class="alert alert-error">
+                        <strong>Erreurs de validation :</strong>
+                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                            {% for field, message in errors %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <form method="post" id="eventForm">
+                    <div class="form-group">
+                        <label for="titre" class="form-label">Titre de l'événement *</label>
+                        <input
+                            type="text"
+                            id="titre"
+                            name="titre"
+                            class="form-input {{ errors.titre is defined ? 'error' : '' }}"
+                            value="{{ formData.titre ?? event.titre }}"
+                            minlength="5"
+                            maxlength="255"
+                            required>
+                        <span class="error-message" id="titre-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            class="form-textarea {{ errors.description is defined ? 'error' : '' }}"
+                            minlength="20"
+                            required>{{ formData.description ?? event.description }}</textarea>
+                        <span class="error-message" id="description-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateDebut" class="form-label">Date et heure de début *</label>
+                        <input
+                            type="datetime-local"
+                            id="dateDebut"
+                            name="dateDebut"
+                            class="form-input {{ errors.dateDebut is defined ? 'error' : '' }}"
+                            value="{{ formData.dateDebut ?? event.dateDebut|date('Y-m-d\\TH:i') }}"
+                            required>
+                        <span class="error-message" id="dateDebut-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateFin" class="form-label">Date et heure de fin *</label>
+                        <input
+                            type="datetime-local"
+                            id="dateFin"
+                            name="dateFin"
+                            class="form-input {{ errors.dateFin is defined ? 'error' : '' }}"
+                            value="{{ formData.dateFin ?? event.dateFin|date('Y-m-d\\TH:i') }}"
+                            required>
+                        <span class="error-message" id="dateFin-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lieu" class="form-label">Lieu *</label>
+                        <input
+                            type="text"
+                            id="lieu"
+                            name="lieu"
+                            class="form-input {{ errors.lieu is defined ? 'error' : '' }}"
+                            value="{{ formData.lieu ?? event.lieu }}"
+                            minlength="3"
+                            maxlength="255"
+                            required>
+                        <span class="error-message" id="lieu-error"></span>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        <a href="{{ path('admin_event_index') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('eventForm');
+        const titreInput = document.getElementById('titre');
+        const descriptionInput = document.getElementById('description');
+        const dateDebutInput = document.getElementById('dateDebut');
+        const dateFinInput = document.getElementById('dateFin');
+        const lieuInput = document.getElementById('lieu');
+
+        // Real-time validation
+        titreInput.addEventListener('input', function() {
+            validateTitre();
+        });
+
+        descriptionInput.addEventListener('input', function() {
+            validateDescription();
+        });
+
+        dateDebutInput.addEventListener('change', function() {
+            validateDateDebut();
+            validateDateFin();
+        });
+
+        dateFinInput.addEventListener('change', function() {
+            validateDateFin();
+        });
+
+        lieuInput.addEventListener('input', function() {
+            validateLieu();
+        });
+
+        // Form submission validation
+        form.addEventListener('submit', function(e) {
+            const isTitreValid = validateTitre();
+            const isDescriptionValid = validateDescription();
+            const isDateDebutValid = validateDateDebut();
+            const isDateFinValid = validateDateFin();
+            const isLieuValid = validateLieu();
+
+            if (!isTitreValid || !isDescriptionValid || !isDateDebutValid || !isDateFinValid || !isLieuValid) {
+                e.preventDefault();
+                alert('Veuillez corriger les erreurs dans le formulaire.');
+            }
+        });
+
+        function validateTitre() {
+            const value = titreInput.value.trim();
+            const errorElement = document.getElementById('titre-error');
+
+            if (value.length === 0) {
+                showError(titreInput, errorElement, 'Le titre est obligatoire.');
+                return false;
+            } else if (value.length < 5) {
+                showError(titreInput, errorElement, 'Le titre doit contenir au moins 5 caractères.');
+                return false;
+            } else if (value.length > 255) {
+                showError(titreInput, errorElement, 'Le titre ne peut pas dépasser 255 caractères.');
+                return false;
+            } else {
+                clearError(titreInput, errorElement);
+                return true;
+            }
+        }
+
+        function validateDescription() {
+            const value = descriptionInput.value.trim();
+            const errorElement = document.getElementById('description-error');
+
+            if (value.length === 0) {
+                showError(descriptionInput, errorElement, 'La description est obligatoire.');
+                return false;
+            } else if (value.length < 20) {
+                showError(descriptionInput, errorElement, 'La description doit contenir au moins 20 caractères.');
+                return false;
+            } else {
+                clearError(descriptionInput, errorElement);
+                return true;
+            }
+        }
+
+        function validateDateDebut() {
+            const value = dateDebutInput.value;
+            const errorElement = document.getElementById('dateDebut-error');
+
+            if (!value) {
+                showError(dateDebutInput, errorElement, 'La date de début est obligatoire.');
+                return false;
+            }
+
+            const dateDebut = new Date(value);
+            const now = new Date();
+
+            if (dateDebut <= now) {
+                showError(dateDebutInput, errorElement, 'La date de début doit être dans le futur.');
+                return false;
+            } else {
+                clearError(dateDebutInput, errorElement);
+                return true;
+            }
+        }
+
+        function validateDateFin() {
+            const dateDebutValue = dateDebutInput.value;
+            const dateFinValue = dateFinInput.value;
+            const errorElement = document.getElementById('dateFin-error');
+
+            if (!dateFinValue) {
+                showError(dateFinInput, errorElement, 'La date de fin est obligatoire.');
+                return false;
+            }
+
+            if (!dateDebutValue) {
+                clearError(dateFinInput, errorElement);
+                return true;
+            }
+
+            const dateDebut = new Date(dateDebutValue);
+            const dateFin = new Date(dateFinValue);
+
+            if (dateFin <= dateDebut) {
+                showError(dateFinInput, errorElement, 'La date de fin doit être après la date de début.');
+                return false;
+            } else {
+                clearError(dateFinInput, errorElement);
+                return true;
+            }
+        }
+
+        function validateLieu() {
+            const value = lieuInput.value.trim();
+            const errorElement = document.getElementById('lieu-error');
+
+            if (value.length === 0) {
+                showError(lieuInput, errorElement, 'Le lieu est obligatoire.');
+                return false;
+            } else if (value.length < 3) {
+                showError(lieuInput, errorElement, 'Le lieu doit contenir au moins 3 caractères.');
+                return false;
+            } else if (value.length > 255) {
+                showError(lieuInput, errorElement, 'Le lieu ne peut pas dépasser 255 caractères.');
+                return false;
+            } else {
+                clearError(lieuInput, errorElement);
+                return true;
+            }
+        }
+
+        function showError(inputElement, errorElement, message) {
+            inputElement.classList.add('error');
+            errorElement.textContent = message;
+        }
+
+        function clearError(inputElement, errorElement) {
+            inputElement.classList.remove('error');
+            errorElement.textContent = '';
+        }
+    });
+</script>
+{% endblock %}

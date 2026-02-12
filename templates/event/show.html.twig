@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.titre }} - OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-title">
+                        <h1>OTEMPS</h1>
+                        <p>Valorisation du Patrimoine Culturel</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <p>Préserver • Transmettre • Partager</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-container">
+            <div style="margin-bottom: 1.5rem;">
+                <a href="{{ path('app_home') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Retour aux événements
+                </a>
+            </div>
+
+            {% for message in app.flashes('success') %}
+                <div style="background: #dcfce7; border-left: 4px solid #16a34a; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="color: #15803d; margin: 0;">{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div style="background: #fee2e2; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="color: #dc2626; margin: 0;">{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('warning') %}
+                <div style="background: #fef3c7; border-left: 4px solid #d97706; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="color: #92400e; margin: 0;">{{ message }}</p>
+                </div>
+            {% endfor %}
+
+            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <div style="padding: 2rem;">
+                    <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #78350f; margin-bottom: 1.5rem;">{{ event.titre }}</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(to bottom right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Date de début
+                            </div>
+                            <div style="color: #374151; font-size: 0.875rem;">{{ event.dateDebut|date('d/m/Y à H:i') }}</div>
+                        </div>
+
+                        <div style="background: linear-gradient(to bottom right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Date de fin
+                            </div>
+                            <div style="color: #374151; font-size: 0.875rem;">{{ event.dateFin|date('d/m/Y à H:i') }}</div>
+                        </div>
+
+                        <div style="background: linear-gradient(to bottom right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                Lieu
+                            </div>
+                            <div style="color: #374151; font-size: 0.875rem;">{{ event.lieu }}</div>
+                        </div>
+
+                        <div style="background: linear-gradient(to bottom right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #92400e; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                Participants
+                            </div>
+                            <div style="color: #374151; font-size: 0.875rem;">{{ event.participantsCount }} inscrit(s)</div>
+                        </div>
+                    </div>
+
+                    <div style="background: linear-gradient(to right, #fef3c7, #ffedd5); border-left: 4px solid #d97706; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
+                        <h3 style="font-weight: 600; color: #78350f; margin-bottom: 0.75rem;">Description</h3>
+                        <p style="color: #1f2937; line-height: 1.8; margin: 0;">{{ event.description }}</p>
+                    </div>
+
+                    <form method="post" action="{{ path('app_event_participate', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #78350f; margin-bottom: 1.5rem;">Formulaire d'inscription</h3>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label for="user_id" style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Sélectionnez votre profil</label>
+                            <select name="user_id" id="user_id" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif;">
+                                <option value="">-- Choisir un utilisateur --</option>
+                                <option value="2">Alice Martin</option>
+                                <option value="3">Bob Dupont</option>
+                                <option value="4">Claire Bernard</option>
+                                <option value="5">David Rousseau</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" style="width: 100%; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;">
+                            Confirmer mon inscription
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>© 2026 OTEMPS - Tous droits réservés</p>
+                <p>Préservation du patrimoine culturel matériel et immatériel</p>
+            </div>
+        </footer>
+    </main>
+{% endblock %}

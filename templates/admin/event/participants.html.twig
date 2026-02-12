@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participants - {{ event.titre }} - OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; }
+        .admin-table th { background: linear-gradient(to right, #d97706, #ea580c); color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        .admin-table td { padding: 1rem; border-bottom: 1px solid #e5e7eb; }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .badge { padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; }
+        .badge-success { background: #dcfce7; color: #15803d; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-title">
+                        <h1>OTEMPS - Admin</h1>
+                        <p>Liste des participants</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-container">
+            <div style="margin-bottom: 1.5rem;">
+                <a href="{{ path('admin_event_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Retour à la liste des événements
+                </a>
+            </div>
+
+            <div style="background: linear-gradient(to right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #78350f; margin-bottom: 0.5rem;">{{ event.titre }}</h2>
+                <p style="color: #6b7280; margin: 0;">{{ event.participantsCount }} participant(s) confirmé(s)</p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); overflow: hidden;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Date d'inscription</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participation in event.participations %}
+                            <tr>
+                                <td style="font-weight: 500; color: #78350f;">{{ participation.user.name }}</td>
+                                <td>{{ participation.user.email }}</td>
+                                <td>{{ participation.dateInscription|date('d/m/Y à H:i') }}</td>
+                                <td>
+                                    <span class="badge badge-{{ participation.statut == 'confirmée' ? 'success' : 'danger' }}">
+                                        {{ participation.statut|capitalize }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #6b7280; padding: 2rem;">Aucun participant inscrit pour le moment.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+{% endblock %}
