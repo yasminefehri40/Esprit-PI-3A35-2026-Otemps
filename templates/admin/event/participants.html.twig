@@ -1,82 +1,148 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
-{% block title %}Participants - {{ event.titre }} - OTEMPS{% endblock %}
+{% block title %}Participants — {{ event.titre }}{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        .admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; }
-        .admin-table th { background: linear-gradient(to right, #d97706, #ea580c); color: white; padding: 1rem; text-align: left; font-weight: 600; }
-        .admin-table td { padding: 1rem; border-bottom: 1px solid #e5e7eb; }
-        .admin-table tr:last-child td { border-bottom: none; }
-        .badge { padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 600; }
-        .badge-success { background: #dcfce7; color: #15803d; }
-        .badge-danger { background: #fee2e2; color: #dc2626; }
-    </style>
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_event_index') }}">Événements</a>
+    <span class="sep">/</span>
+    <span class="current">Participants</span>
 {% endblock %}
 
-{% block body %}
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-left">
-                    <div class="header-title">
-                        <h1>OTEMPS - Admin</h1>
-                        <p>Liste des participants</p>
-                    </div>
-                </div>
-            </div>
+{% block extra_styles %}
+<style>
+    .event-info-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .event-info-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+    .event-info-sub   { font-size: 0.8rem; color: var(--text-muted); }
+
+    .event-info-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .info-stat { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+    .info-stat-value { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+    .info-stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .data-table thead tr { background: #f8fafc; }
+    .data-table th {
+        padding: 0.875rem 1.25rem;
+        text-align: left;
+        font-size: 0.72rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #fafbfc; }
+
+    .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .user-avatar {
+        width: 34px; height: 34px; border-radius: 50%;
+        background: var(--primary-light); color: var(--primary);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .user-name  { font-weight: 600; color: var(--text); font-size: 0.875rem; }
+    .user-email { font-size: 0.75rem; color: var(--text-muted); }
+
+    .status-pill {
+        display: inline-flex; align-items: center; gap: 0.3rem;
+        padding: 0.25rem 0.65rem; border-radius: 999px;
+        font-size: 0.72rem; font-weight: 600;
+    }
+    .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-confirmed { background: #f0fdf4; color: #15803d; }
+    .status-cancelled { background: #fef2f2; color: #b91c1c; }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+    .empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.4; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Participants</h1>
+    <p>{{ event.titre }}</p>
+</div>
+
+<div class="event-info-card">
+    <div>
+        <div class="event-info-title">{{ event.titre }}</div>
+        <div class="event-info-sub">
+            {{ event.dateDebut|date('d/m/Y H:i') }} → {{ event.dateFin|date('d/m/Y H:i') }} &nbsp;·&nbsp; {{ event.lieu }}
         </div>
-    </header>
-
-    <main class="main-content">
-        <div class="content-container">
-            <div style="margin-bottom: 1.5rem;">
-                <a href="{{ path('admin_event_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Retour à la liste des événements
-                </a>
-            </div>
-
-            <div style="background: linear-gradient(to right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #78350f; margin-bottom: 0.5rem;">{{ event.titre }}</h2>
-                <p style="color: #6b7280; margin: 0;">{{ event.participantsCount }} participant(s) confirmé(s)</p>
-            </div>
-
-            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); overflow: hidden;">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Email</th>
-                            <th>Date d'inscription</th>
-                            <th>Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for participation in event.participations %}
-                            <tr>
-                                <td style="font-weight: 500; color: #78350f;">{{ participation.user.name }}</td>
-                                <td>{{ participation.user.email }}</td>
-                                <td>{{ participation.dateInscription|date('d/m/Y à H:i') }}</td>
-                                <td>
-                                    <span class="badge badge-{{ participation.statut == 'confirmée' ? 'success' : 'danger' }}">
-                                        {{ participation.statut|capitalize }}
-                                    </span>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #6b7280; padding: 2rem;">Aucun participant inscrit pour le moment.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    </div>
+    <div class="event-info-stats">
+        <div class="info-stat">
+            <div class="info-stat-value">{{ event.participantsCount }}</div>
+            <div class="info-stat-label">Confirmés</div>
         </div>
-    </main>
+        <div class="info-stat">
+            <div class="info-stat-value">{{ event.nbPlaces }}</div>
+            <div class="info-stat-label">Places total</div>
+        </div>
+        <div class="info-stat">
+            <div class="info-stat-value">{{ event.placesRestantes }}</div>
+            <div class="info-stat-label">Disponibles</div>
+        </div>
+    </div>
+</div>
+
+<div class="table-card">
+    {% if event.participations is empty %}
+        <div class="empty-state">
+            <div class="empty-state-icon">👥</div>
+            <p>Aucun participant inscrit pour le moment.</p>
+        </div>
+    {% else %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Participant</th>
+                <th>Date d'inscription</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for participation in event.participations %}
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">{{ participation.user.name|slice(0,1)|upper }}</div>
+                            <div>
+                                <div class="user-name">{{ participation.user.name }}</div>
+                                <div class="user-email">{{ participation.user.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-size:0.8rem; color:var(--text-muted);">
+                        {{ participation.dateInscription|date('d/m/Y à H:i') }}
+                    </td>
+                    <td>
+                        <span class="status-pill {% if participation.statut == 'confirmée' %}status-confirmed{% else %}status-cancelled{% endif %}">
+                            {{ participation.statut|capitalize }}
+                        </span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
 {% endblock %}

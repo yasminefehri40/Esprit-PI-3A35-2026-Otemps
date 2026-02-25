@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Repository\EventRepository;
 use App\Repository\UserRepository;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,8 +17,31 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class AdminEventController extends AbstractController
 {
     #[Route('/', name: 'admin_event_index')]
-    public function index(Request $request, EventRepository $eventRepository): Response
+    public function index(Request $request, EventRepository $eventRepository, WeatherService $weatherService, EntityManagerInterface $em): Response
     {
+        // Auto-cancel upcoming events with bad weather (check next 30 days)
+        $upcoming = $eventRepository->findUpcomingActiveEvents(30);
+        $cancelled = [];
+
+        foreach ($upcoming as $event) {
+            $weather = $weatherService->getWeather($event->getLieu(), $event->getDateDebut());
+            if ($weather && $weatherService->isBadWeather($weather)) {
+                $event->setStatut('annulé_météo');
+                $cancelled[] = \sprintf(
+                    '"%s" annulé — %s',
+                    $event->getTitre(),
+                    $weatherService->getBadWeatherReason($weather)
+                );
+            }
+        }
+
+        if (!empty($cancelled)) {
+            $em->flush();
+            foreach ($cancelled as $msg) {
+                $this->addFlash('warning', $msg);
+            }
+        }
+
         $search = $request->query->get('search', '');
 
         if ($search) {
@@ -54,12 +78,13 @@ class AdminEventController extends AbstractController
             }
 
             $event->setLieu($request->request->get('lieu'));
+            $event->setNbPlaces((int) $request->request->get('nbPlaces', 1));
             $event->setCreator($creator);
 
             // Validate the entity
             $errors = $validator->validate($event);
 
-            if (count($errors) > 0) {
+            if (\count($errors) > 0) {
                 $errorMessages = [];
                 foreach ($errors as $error) {
                     $errorMessages[$error->getPropertyPath()] = $error->getMessage();
@@ -101,11 +126,12 @@ class AdminEventController extends AbstractController
             }
 
             $event->setLieu($request->request->get('lieu'));
+            $event->setNbPlaces((int) $request->request->get('nbPlaces', 1));
 
             // Validate the entity
             $errors = $validator->validate($event);
 
-            if (count($errors) > 0) {
+            if (\count($errors) > 0) {
                 $errorMessages = [];
                 foreach ($errors as $error) {
                     $errorMessages[$error->getPropertyPath()] = $error->getMessage();

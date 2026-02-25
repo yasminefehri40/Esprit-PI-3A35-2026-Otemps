@@ -62,6 +62,14 @@ class Event
     )]
     private ?string $lieu = null;
 
+    #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "Le nombre de places est obligatoire.")]
+    #[Assert\Positive(message: "Le nombre de places doit être supérieur à 0.")]
+    private ?int $nbPlaces = null;
+
+    #[ORM\Column(length: 50)]
+    private string $statut = 'actif';
+
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'createdEvents')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
@@ -69,9 +77,13 @@ class Event
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $participations;
 
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'event', cascade: ['remove'])]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->participations = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,5 +165,59 @@ class Event
     public function getParticipantsCount(): int
     {
         return $this->participations->filter(fn($p) => $p->getStatut() === 'confirmée')->count();
+    }
+
+    public function getNbPlaces(): ?int
+    {
+        return $this->nbPlaces;
+    }
+
+    public function setNbPlaces(int $nbPlaces): static
+    {
+        $this->nbPlaces = $nbPlaces;
+        return $this;
+    }
+
+    public function getPlacesRestantes(): int
+    {
+        return max(0, $this->nbPlaces - $this->getParticipantsCount());
+    }
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
+        return $this;
+    }
+
+    public function isAnnule(): bool
+    {
+        return str_starts_with($this->statut, 'annulé');
+    }
+
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function getReviewsCount(): int
+    {
+        return $this->reviews->count();
+    }
+
+    public function getAverageRating(): ?float
+    {
+        if ($this->reviews->isEmpty()) {
+            return null;
+        }
+        $total = 0;
+        foreach ($this->reviews as $review) {
+            $total += $review->getRating();
+        }
+        return round($total / $this->reviews->count(), 1);
     }
 }

@@ -54,9 +54,28 @@
                 </div>
             {% endfor %}
 
+            {% if event.statut == 'annulé_météo' %}
+                <div style="background: linear-gradient(to right, #fef2f2, #fee2e2); border: 2px solid #f87171; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <div>
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #991b1b; margin: 0 0 0.25rem;">Événement annulé — Météo défavorable</h3>
+                        <p style="color: #7f1d1d; margin: 0; font-size: 0.9rem;">Cet événement a été automatiquement annulé en raison de conditions météorologiques défavorables (température inférieure à 10°C ou supérieure à 40°C).</p>
+                    </div>
+                </div>
+            {% endif %}
+
             <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                 <div style="padding: 2rem;">
-                    <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #78350f; margin-bottom: 1.5rem;">{{ event.titre }}</h2>
+                    <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: {% if event.statut == 'annulé_météo' %}#991b1b{% else %}#78350f{% endif %}; margin-bottom: 1.5rem;">
+                        {{ event.titre }}
+                        {% if event.statut == 'annulé_météo' %}
+                            <span style="font-size: 1rem; font-family: 'Inter', sans-serif; font-weight: 600; background: #fee2e2; color: #991b1b; padding: 0.2rem 0.75rem; border-radius: 9999px; margin-left: 0.75rem; vertical-align: middle;">Annulé</span>
+                        {% endif %}
+                    </h2>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                         <div style="background: linear-gradient(to bottom right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 1rem;">
@@ -106,8 +125,48 @@
                                 </svg>
                                 Participants
                             </div>
-                            <div style="color: #374151; font-size: 0.875rem;">{{ event.participantsCount }} inscrit(s)</div>
+                            <div style="color: #374151; font-size: 0.875rem;">{{ event.participantsCount }} / {{ event.nbPlaces }} inscrit(s)</div>
                         </div>
+
+                        <div style="background: linear-gradient(to bottom right, {% if event.placesRestantes == 0 %}#fee2e2, #fecaca{% else %}#dcfce7, #bbf7d0{% endif %}); border-radius: 0.5rem; padding: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: {% if event.placesRestantes == 0 %}#991b1b{% else %}#166534{% endif %}; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                    <path d="M3 9h18"></path>
+                                    <path d="M9 21V9"></path>
+                                </svg>
+                                Places disponibles
+                            </div>
+                            <div style="color: {% if event.placesRestantes == 0 %}#991b1b{% else %}#166534{% endif %}; font-size: 0.875rem; font-weight: 600;">
+                                {% if event.placesRestantes == 0 %}
+                                    Complet
+                                {% else %}
+                                    {{ event.placesRestantes }} place(s) restante(s)
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# ── Weather card ── #}
+                        {% if weather %}
+                            {% set bad = weather.temperature < 10 or weather.temperature > 40 %}
+                            <div style="background: linear-gradient(to bottom right, {% if bad %}#fef2f2, #fee2e2{% else %}#eff6ff, #dbeafe{% endif %}); border-radius: 0.5rem; padding: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: {% if bad %}#991b1b{% else %}#1e40af{% endif %}; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                    <span style="font-size: 1.25rem; line-height: 1;">{{ weather.emoji }}</span>
+                                    Météo — {{ weather.city }}
+                                    {% if not weather.is_forecast %}
+                                        <span style="font-size: 0.7rem; font-weight: 400; opacity: 0.7;">(actuelle)</span>
+                                    {% else %}
+                                        <span style="font-size: 0.7rem; font-weight: 400; opacity: 0.7;">(prévision)</span>
+                                    {% endif %}
+                                </div>
+                                <div style="color: {% if bad %}#7f1d1d{% else %}#1e3a8a{% endif %}; font-size: 0.875rem; font-weight: 700;">{{ weather.temperature }}°C <span style="font-weight: 400;">(ressenti {{ weather.feels_like }}°C)</span></div>
+                                <div style="color: #374151; font-size: 0.8rem; margin-top: 0.2rem;">{{ weather.description|capitalize }}</div>
+                                <div style="color: #6b7280; font-size: 0.75rem; margin-top: 0.25rem;">Humidité {{ weather.humidity }}% · Vent {{ weather.wind_speed }} km/h</div>
+                                {% if bad %}
+                                    <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #dc2626;">⚠ Conditions défavorables</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div style="background: linear-gradient(to right, #fef3c7, #ffedd5); border-left: 4px solid #d97706; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
@@ -115,9 +174,33 @@
                         <p style="color: #1f2937; line-height: 1.8; margin: 0;">{{ event.description }}</p>
                     </div>
 
-                    <form method="post" action="{{ path('app_event_participate', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem;">
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-weight: 600; color: #78350f; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            Localisation — {{ event.lieu }}
+                        </h3>
+                        <iframe
+                            width="600"
+                            height="450"
+                            style="border:0; width:100%; border-radius: 0.5rem; display: block;"
+                            loading="lazy"
+                            allowfullscreen
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDX-nRJ8JxhkpsCsD_-7qGO1vgGtRfMWG4&q={{ event.lieu|url_encode }}">
+                        </iframe>
+                    </div>
+
+                    {% if event.statut == 'annulé_météo' %}
+                    <div style="background: linear-gradient(to bottom right, #fef2f2, #fee2e2); border: 2px solid #f87171; border-radius: 0.5rem; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #991b1b; margin-bottom: 0.75rem;">Inscriptions fermées</h3>
+                        <p style="color: #7f1d1d; margin: 0;">Cet événement a été annulé pour cause de météo défavorable. Les inscriptions ne sont plus disponibles.</p>
+                    </div>
+                    {% elseif event.placesRestantes > 0 %}
+                    <form id="registration-form" method="post" action="{{ path('app_event_participate', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
                         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #78350f; margin-bottom: 1.5rem;">Formulaire d'inscription</h3>
-                        
+
                         <div style="margin-bottom: 1.5rem;">
                             <label for="user_id" style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Sélectionnez votre profil</label>
                             <select name="user_id" id="user_id" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif;">
@@ -129,10 +212,141 @@
                             </select>
                         </div>
 
-                        <button type="submit" style="width: 100%; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;">
+                        <button id="registration-submit" type="submit" style="width: 100%; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;">
                             Confirmer mon inscription
                         </button>
                     </form>
+                    {% else %}
+                    <div style="background: linear-gradient(to bottom right, #fee2e2, #fecaca); border: 2px solid #f87171; border-radius: 0.5rem; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #991b1b; margin-bottom: 0.75rem;">Événement complet</h3>
+                        <p style="color: #7f1d1d; margin: 0;">Toutes les places sont réservées. Vous ne pouvez plus vous inscrire à cet événement.</p>
+                    </div>
+                    {% endif %}
+
+                    {# ── REVIEWS SECTION ── #}
+                    <div id="review-section" style="border-top: 2px solid #fef3c7; padding-top: 2rem;">
+
+                        {# Summary bar #}
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #78350f; margin: 0;">Avis des participants</h3>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                {% if event.averageRating is not null %}
+                                    <div style="display: flex; gap: 2px;">
+                                        {% for i in 1..5 %}
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="{% if i <= event.averageRating %}#f59e0b{% else %}#d1d5db{% endif %}" stroke="{% if i <= event.averageRating %}#f59e0b{% else %}#d1d5db{% endif %}" stroke-width="1">
+                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                            </svg>
+                                        {% endfor %}
+                                    </div>
+                                    <span style="font-size: 1.25rem; font-weight: 700; color: #92400e;">{{ event.averageRating }}/5</span>
+                                {% endif %}
+                                <span style="color: #6b7280; font-size: 0.875rem;">({{ event.reviewsCount }} avis)</span>
+                            </div>
+                        </div>
+
+                        {# Build list of confirmed participants who haven't reviewed yet #}
+                        {% set confirmed_ids = [] %}
+                        {% set already_reviewed_ids = [] %}
+                        {% set confirmed_participants_data = [] %}
+                        {% for p in event.participations %}
+                            {% if p.statut == 'confirmée' %}
+                                {% set confirmed_ids = confirmed_ids|merge([p.user.id]) %}
+                                {% set confirmed_participants_data = confirmed_participants_data|merge([{
+                                    'userId': p.user.id,
+                                    'cancelUrl': path('app_participation_cancel', {id: p.id})
+                                }]) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for r in event.reviews %}
+                            {% set already_reviewed_ids = already_reviewed_ids|merge([r.user.id]) %}
+                        {% endfor %}
+                        {% set eligible = [] %}
+                        {% for p in event.participations %}
+                            {% if p.statut == 'confirmée' and p.user.id not in already_reviewed_ids %}
+                                {% set eligible = eligible|merge([p]) %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Pass data to JS for registration form integration #}
+                        {% set eligible_ids = [] %}
+                        {% for p in eligible %}
+                            {% set eligible_ids = eligible_ids|merge([p.user.id]) %}
+                        {% endfor %}
+                        <script>
+                            window.otempsEligibleIds = {{ eligible_ids|json_encode|raw }};
+                            window.otempsConfirmedParticipants = {{ confirmed_participants_data|json_encode|raw }};
+                        </script>
+
+                        {# Review form — only shown if at least one confirmed participant hasn't reviewed yet #}
+                        {% if eligible is not empty %}
+                        <form method="post" action="{{ path('app_event_review', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
+                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #78350f; margin-bottom: 1.5rem;">Laisser un avis</h4>
+                            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">Réservé aux participants confirmés • Un seul avis par événement</p>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Votre profil</label>
+                                <select name="user_id" id="review-user-select" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif;">
+                                    <option value="">-- Choisir un participant --</option>
+                                    {% for p in eligible %}
+                                        <option value="{{ p.user.id }}">{{ p.user.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.75rem;">Note</label>
+                                <div style="display: flex; gap: 0.5rem;" id="star-rating">
+                                    {% for i in 1..5 %}
+                                        <label style="cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                                            <input type="radio" name="rating" value="{{ i }}" style="display: none;" required>
+                                            <svg class="star" data-value="{{ i }}" width="36" height="36" viewBox="0 0 24 24" fill="#d1d5db" stroke="#d1d5db" stroke-width="1" style="transition: fill 0.15s;">
+                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                            </svg>
+                                            <span style="font-size: 0.75rem; color: #6b7280;">{{ i }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Commentaire</label>
+                                <textarea name="comment" required minlength="5" rows="4" placeholder="Partagez votre expérience..." style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif; resize: vertical; box-sizing: border-box;"></textarea>
+                            </div>
+
+                            <button type="submit" style="padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer;">
+                                Publier mon avis
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {# Reviews list #}
+                        {% if event.reviews is not empty %}
+                            <div style="display: grid; gap: 1rem;">
+                                {% for review in event.reviews %}
+                                    <div style="background: rgba(255,255,255,0.9); border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.07);">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                                            <div>
+                                                <span style="font-weight: 600; color: #374151;">{{ review.user.name }}</span>
+                                                <span style="color: #9ca3af; font-size: 0.8rem; margin-left: 0.75rem;">{{ review.createdAt|date('d/m/Y') }}</span>
+                                            </div>
+                                            <div style="display: flex; gap: 2px;">
+                                                {% for i in 1..5 %}
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if i <= review.rating %}#f59e0b{% else %}#d1d5db{% endif %}" stroke="{% if i <= review.rating %}#f59e0b{% else %}#d1d5db{% endif %}" stroke-width="1">
+                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                                    </svg>
+                                                {% endfor %}
+                                                <span style="font-size: 0.8rem; color: #6b7280; margin-left: 0.25rem;">{{ review.rating }}/5</span>
+                                            </div>
+                                        </div>
+                                        <p style="color: #1f2937; line-height: 1.7; margin: 0;">{{ review.comment }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: #6b7280; text-align: center; padding: 1.5rem 0;">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>
+                        {% endif %}
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -144,4 +358,107 @@
             </div>
         </footer>
     </main>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ── Star rating interaction ──
+        const starRating = document.getElementById('star-rating');
+        if (starRating) {
+            const stars = starRating.querySelectorAll('.star');
+            const radios = starRating.querySelectorAll('input[type="radio"]');
+
+            function highlight(upTo) {
+                stars.forEach(function (s) {
+                    const val = parseInt(s.dataset.value, 10);
+                    s.setAttribute('fill', val <= upTo ? '#f59e0b' : '#d1d5db');
+                    s.setAttribute('stroke', val <= upTo ? '#f59e0b' : '#d1d5db');
+                });
+            }
+
+            stars.forEach(function (star) {
+                star.addEventListener('mouseenter', function () {
+                    highlight(parseInt(star.dataset.value, 10));
+                });
+            });
+
+            starRating.addEventListener('mouseleave', function () {
+                const checked = starRating.querySelector('input[type="radio"]:checked');
+                highlight(checked ? parseInt(checked.value, 10) : 0);
+            });
+
+            radios.forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    highlight(parseInt(radio.value, 10));
+                });
+            });
+        }
+
+        // ── Registration form → cancel / review integration ──
+        const registrationForm = document.getElementById('registration-form');
+        const registrationSelect = document.getElementById('user_id');
+        const submitBtn = document.getElementById('registration-submit');
+        const reviewSection = document.getElementById('review-section');
+        const reviewUserSelect = document.getElementById('review-user-select');
+
+        const eligibleIds = window.otempsEligibleIds || [];
+        const confirmedParticipants = window.otempsConfirmedParticipants || [];
+
+        // Build userId → cancelUrl map
+        const confirmedMap = {};
+        confirmedParticipants.forEach(function (p) { confirmedMap[p.userId] = p; });
+
+        const originalAction = registrationForm ? registrationForm.action : '';
+        const originalBtnText = 'Confirmer mon inscription';
+        const originalBtnStyle = 'linear-gradient(to right, #d97706, #ea580c)';
+
+        if (registrationSelect) {
+            registrationSelect.addEventListener('change', function () {
+                const selectedId = parseInt(this.value, 10);
+
+                if (!selectedId) {
+                    // Reset to original registration state
+                    if (registrationForm) registrationForm.action = originalAction;
+                    if (submitBtn) {
+                        submitBtn.textContent = originalBtnText;
+                        submitBtn.style.background = originalBtnStyle;
+                    }
+                    return;
+                }
+
+                const confirmedData = confirmedMap[selectedId];
+
+                if (confirmedData) {
+                    // User is already a confirmed participant → switch to cancel mode
+                    if (registrationForm) registrationForm.action = confirmedData.cancelUrl;
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Annuler mon inscription';
+                        submitBtn.style.background = 'linear-gradient(to right, #dc2626, #b91c1c)';
+                    }
+
+                    // Scroll to review section for any confirmed participant
+                    if (reviewSection) {
+                        reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        reviewSection.style.transition = 'box-shadow 0.4s';
+                        reviewSection.style.boxShadow = '0 0 0 3px #fbbf24';
+                        setTimeout(function () { reviewSection.style.boxShadow = ''; }, 2000);
+                    }
+
+                    // Pre-select user in review form if they haven't reviewed yet
+                    if (eligibleIds.includes(selectedId) && reviewUserSelect) {
+                        reviewUserSelect.value = String(selectedId);
+                    }
+                } else {
+                    // Not a confirmed participant → normal registration mode
+                    if (registrationForm) registrationForm.action = originalAction;
+                    if (submitBtn) {
+                        submitBtn.textContent = originalBtnText;
+                        submitBtn.style.background = originalBtnStyle;
+                    }
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

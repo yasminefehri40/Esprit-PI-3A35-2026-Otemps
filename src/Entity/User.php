@@ -31,10 +31,14 @@ class User
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user')]
     private Collection $participations;
 
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->createdEvents = new ArrayCollection();
         $this->participations = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,5 +87,10 @@ class User
     public function getParticipations(): Collection
     {
         return $this->participations;
+    }
+
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
     }
 }

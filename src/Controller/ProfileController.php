@@ -22,6 +22,13 @@ class ProfileController extends AbstractController
     #[Route('/profile/participation/{id}/confirm', name: 'app_participation_confirm', methods: ['POST'])]
     public function confirm(Participation $participation, EntityManagerInterface $em): Response
     {
+        $event = $participation->getEvent();
+
+        if ($event->getPlacesRestantes() <= 0) {
+            $this->addFlash('error', 'Désolé, il n\'y a plus de places disponibles pour cet événement.');
+            return $this->redirectToRoute('app_profile_events', ['id' => $participation->getUser()->getId()]);
+        }
+
         $participation->setStatut('confirmée');
         $em->flush();
 

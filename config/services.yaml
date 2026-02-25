@@ -21,3 +21,5 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # WeatherService uses Open-Meteo (100% free, no API key needed) — autowired automatically

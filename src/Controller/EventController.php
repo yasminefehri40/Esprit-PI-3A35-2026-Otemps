@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Participation;
-use App\Repository\EventRepository;
 use App\Repository\UserRepository;
+use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +15,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class EventController extends AbstractController
 {
     #[Route('/event/{id}', name: 'app_event_show')]
-    public function show(Event $event): Response
+    public function show(Event $event, WeatherService $weatherService): Response
     {
+        $weather = $weatherService->getWeather($event->getLieu(), $event->getDateDebut());
+
         return $this->render('event/show.html.twig', [
-            'event' => $event,
+            'event'   => $event,
+            'weather' => $weather,
         ]);
     }
 
@@ -43,6 +46,12 @@ class EventController extends AbstractController
                 $this->addFlash('warning', 'Vous êtes déjà inscrit à cet événement.');
                 return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
             }
+        }
+
+        // Check if there are available places
+        if ($event->getPlacesRestantes() <= 0) {
+            $this->addFlash('error', 'Désolé, il n\'y a plus de places disponibles pour cet événement.');
+            return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
         $participation = new Participation();

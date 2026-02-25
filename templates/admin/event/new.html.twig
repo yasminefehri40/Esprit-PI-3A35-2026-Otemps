@@ -1,297 +1,227 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
-{% block title %}Nouvel événement - OTEMPS{% endblock %}
+{% block title %}Nouvel événement{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        .form-group { margin-bottom: 1.5rem; }
-        .form-label { display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
-        .form-input, .form-textarea { width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif; }
-        .form-input.error, .form-textarea.error { border-color: #ef4444; background-color: #fef2f2; }
-        .form-textarea { min-height: 120px; resize: vertical; }
-        .error-message { color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem; display: block; }
-        .alert { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-        .alert-error { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; font-size: 1rem; }
-        .btn-primary { background: linear-gradient(to right, #d97706, #ea580c); color: white; }
-        .btn-secondary { background: #6b7280; color: white; }
-    </style>
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_event_index') }}">Événements</a>
+    <span class="sep">/</span>
+    <span class="current">Nouveau</span>
 {% endblock %}
 
-{% block body %}
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-left">
-                    <div class="header-title">
-                        <h1>OTEMPS - Admin</h1>
-                        <p>Nouvel événement</p>
-                    </div>
-                </div>
+{% block extra_styles %}
+<style>
+    .form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 2rem;
+        max-width: 720px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .form-input, .form-textarea {
+        padding: 0.625rem 0.875rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        background: var(--surface);
+        transition: border-color 0.15s, box-shadow 0.15s;
+        width: 100%;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+
+    .form-input.error, .form-textarea.error {
+        border-color: var(--danger);
+        background: #fef2f2;
+    }
+
+    .form-textarea { min-height: 110px; resize: vertical; }
+
+    .error-message { color: var(--danger); font-size: 0.75rem; margin-top: 0.1rem; }
+
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+    }
+
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 1.75rem; grid-column: 1 / -1; }
+
+    .btn-submit {
+        padding: 0.625rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 9px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .btn-submit:hover { background: var(--primary-dark); }
+
+    .btn-cancel {
+        padding: 0.625rem 1.25rem;
+        background: transparent;
+        color: var(--text-muted);
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.15s;
+    }
+    .btn-cancel:hover { border-color: #cbd5e1; color: var(--text); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Créer un événement</h1>
+    <p>Remplissez les informations ci-dessous pour créer un nouvel événement.</p>
+</div>
+
+<div class="form-card">
+    {% if errors is defined and errors|length > 0 %}
+        <div class="alert-error">
+            <strong>Erreurs de validation :</strong>
+            <ul style="margin: 0.5rem 0 0 1.25rem; padding: 0;">
+                {% for field, message in errors %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="post" id="eventForm">
+        <div class="form-grid">
+            <div class="form-group full">
+                <label for="titre" class="form-label">Titre *</label>
+                <input type="text" id="titre" name="titre"
+                       class="form-input {{ errors.titre is defined ? 'error' : '' }}"
+                       value="{{ formData.titre ?? '' }}"
+                       minlength="5" maxlength="255" required>
+                <span class="error-message" id="titre-error">{% if errors.titre is defined %}{{ errors.titre }}{% endif %}</span>
+            </div>
+
+            <div class="form-group full">
+                <label for="description" class="form-label">Description *</label>
+                <textarea id="description" name="description"
+                          class="form-textarea {{ errors.description is defined ? 'error' : '' }}"
+                          minlength="20" required>{{ formData.description ?? '' }}</textarea>
+                <span class="error-message" id="description-error">{% if errors.description is defined %}{{ errors.description }}{% endif %}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="dateDebut" class="form-label">Date de début *</label>
+                <input type="datetime-local" id="dateDebut" name="dateDebut"
+                       class="form-input {{ errors.dateDebut is defined ? 'error' : '' }}"
+                       value="{{ formData.dateDebut ?? '' }}" required>
+                <span class="error-message" id="dateDebut-error">{% if errors.dateDebut is defined %}{{ errors.dateDebut }}{% endif %}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="dateFin" class="form-label">Date de fin *</label>
+                <input type="datetime-local" id="dateFin" name="dateFin"
+                       class="form-input {{ errors.dateFin is defined ? 'error' : '' }}"
+                       value="{{ formData.dateFin ?? '' }}" required>
+                <span class="error-message" id="dateFin-error">{% if errors.dateFin is defined %}{{ errors.dateFin }}{% endif %}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="lieu" class="form-label">Lieu *</label>
+                <input type="text" id="lieu" name="lieu"
+                       class="form-input {{ errors.lieu is defined ? 'error' : '' }}"
+                       value="{{ formData.lieu ?? '' }}"
+                       minlength="3" maxlength="255" required>
+                <span class="error-message" id="lieu-error">{% if errors.lieu is defined %}{{ errors.lieu }}{% endif %}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="nbPlaces" class="form-label">Nombre de places *</label>
+                <input type="number" id="nbPlaces" name="nbPlaces"
+                       class="form-input {{ errors.nbPlaces is defined ? 'error' : '' }}"
+                       value="{{ formData.nbPlaces ?? '' }}"
+                       min="1" required>
+                <span class="error-message" id="nbPlaces-error">{% if errors.nbPlaces is defined %}{{ errors.nbPlaces }}{% endif %}</span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Créer l'événement</button>
+                <a href="{{ path('admin_event_index') }}" class="btn-cancel">Annuler</a>
             </div>
         </div>
-    </header>
-
-    <main class="main-content">
-        <div class="content-container">
-            <div style="margin-bottom: 1.5rem;">
-                <a href="{{ path('admin_event_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Retour à la liste
-                </a>
-            </div>
-
-            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; padding: 2rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #78350f; margin-bottom: 2rem;">Créer un nouvel événement</h2>
-
-                {% if errors is defined and errors|length > 0 %}
-                    <div class="alert alert-error">
-                        <strong>Erreurs de validation :</strong>
-                        <ul style="margin: 0.5rem 0 0 1.5rem;">
-                            {% for field, message in errors %}
-                                <li>{{ message }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-                <form method="post" id="eventForm">
-                    <div class="form-group">
-                        <label for="titre" class="form-label">Titre de l'événement *</label>
-                        <input
-                            type="text"
-                            id="titre"
-                            name="titre"
-                            class="form-input {{ errors.titre is defined ? 'error' : '' }}"
-                            value="{{ formData.titre ?? '' }}"
-                            minlength="5"
-                            maxlength="255"
-                            required>
-                        <span class="error-message" id="titre-error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description *</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            class="form-textarea {{ errors.description is defined ? 'error' : '' }}"
-                            minlength="20"
-                            required>{{ formData.description ?? '' }}</textarea>
-                        <span class="error-message" id="description-error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dateDebut" class="form-label">Date et heure de début *</label>
-                        <input
-                            type="datetime-local"
-                            id="dateDebut"
-                            name="dateDebut"
-                            class="form-input {{ errors.dateDebut is defined ? 'error' : '' }}"
-                            value="{{ formData.dateDebut ?? '' }}"
-                            required>
-                        <span class="error-message" id="dateDebut-error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dateFin" class="form-label">Date et heure de fin *</label>
-                        <input
-                            type="datetime-local"
-                            id="dateFin"
-                            name="dateFin"
-                            class="form-input {{ errors.dateFin is defined ? 'error' : '' }}"
-                            value="{{ formData.dateFin ?? '' }}"
-                            required>
-                        <span class="error-message" id="dateFin-error"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lieu" class="form-label">Lieu *</label>
-                        <input
-                            type="text"
-                            id="lieu"
-                            name="lieu"
-                            class="form-input {{ errors.lieu is defined ? 'error' : '' }}"
-                            value="{{ formData.lieu ?? '' }}"
-                            minlength="3"
-                            maxlength="255"
-                            required>
-                        <span class="error-message" id="lieu-error"></span>
-                    </div>
-
-                    <div style="display: flex; gap: 1rem;">
-                        <button type="submit" class="btn btn-primary">Créer l'événement</button>
-                        <a href="{{ path('admin_event_index') }}" class="btn btn-secondary">Annuler</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
+    </form>
+</div>
 {% endblock %}
 
 {% block javascripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('eventForm');
-        const titreInput = document.getElementById('titre');
-        const descriptionInput = document.getElementById('description');
-        const dateDebutInput = document.getElementById('dateDebut');
-        const dateFinInput = document.getElementById('dateFin');
-        const lieuInput = document.getElementById('lieu');
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('eventForm');
 
-        // Real-time validation
-        titreInput.addEventListener('input', function() {
-            validateTitre();
-        });
+    function validate(input, errId, rules) {
+        const errEl = document.getElementById(errId);
+        const msg = rules(input.value.trim());
+        if (msg) { input.classList.add('error'); errEl.textContent = msg; return false; }
+        input.classList.remove('error'); errEl.textContent = ''; return true;
+    }
 
-        descriptionInput.addEventListener('input', function() {
-            validateDescription();
-        });
+    const titre      = document.getElementById('titre');
+    const desc       = document.getElementById('description');
+    const dateDebut  = document.getElementById('dateDebut');
+    const dateFin    = document.getElementById('dateFin');
+    const lieu       = document.getElementById('lieu');
+    const nbPlaces   = document.getElementById('nbPlaces');
 
-        dateDebutInput.addEventListener('change', function() {
-            validateDateDebut();
-            validateDateFin(); // Re-check dateFin when dateDebut changes
-        });
+    function vTitre()    { return validate(titre,  'titre-error', v => !v ? 'Obligatoire.' : v.length < 5 ? 'Min 5 caractères.' : v.length > 255 ? 'Max 255 caractères.' : null); }
+    function vDesc()     { return validate(desc,   'description-error', v => !v ? 'Obligatoire.' : v.length < 20 ? 'Min 20 caractères.' : null); }
+    function vDateDeb()  { return validate(dateDebut, 'dateDebut-error', v => !v ? 'Obligatoire.' : new Date(v) <= new Date() ? 'Doit être dans le futur.' : null); }
+    function vDateFin()  { return validate(dateFin, 'dateFin-error', v => !v ? 'Obligatoire.' : (dateDebut.value && new Date(v) <= new Date(dateDebut.value)) ? 'Doit être après la date de début.' : null); }
+    function vLieu()     { return validate(lieu,  'lieu-error', v => !v ? 'Obligatoire.' : v.length < 3 ? 'Min 3 caractères.' : null); }
+    function vNbPlaces() { return validate(nbPlaces, 'nbPlaces-error', v => !v ? 'Obligatoire.' : parseInt(v) < 1 ? 'Doit être > 0.' : null); }
 
-        dateFinInput.addEventListener('change', function() {
-            validateDateFin();
-        });
+    titre.addEventListener('input', vTitre);
+    desc.addEventListener('input', vDesc);
+    dateDebut.addEventListener('change', () => { vDateDeb(); vDateFin(); });
+    dateFin.addEventListener('change', vDateFin);
+    lieu.addEventListener('input', vLieu);
+    nbPlaces.addEventListener('input', vNbPlaces);
 
-        lieuInput.addEventListener('input', function() {
-            validateLieu();
-        });
-
-        // Form submission validation
-        form.addEventListener('submit', function(e) {
-            const isTitreValid = validateTitre();
-            const isDescriptionValid = validateDescription();
-            const isDateDebutValid = validateDateDebut();
-            const isDateFinValid = validateDateFin();
-            const isLieuValid = validateLieu();
-
-            if (!isTitreValid || !isDescriptionValid || !isDateDebutValid || !isDateFinValid || !isLieuValid) {
-                e.preventDefault();
-                alert('Veuillez corriger les erreurs dans le formulaire.');
-            }
-        });
-
-        function validateTitre() {
-            const value = titreInput.value.trim();
-            const errorElement = document.getElementById('titre-error');
-
-            if (value.length === 0) {
-                showError(titreInput, errorElement, 'Le titre est obligatoire.');
-                return false;
-            } else if (value.length < 5) {
-                showError(titreInput, errorElement, 'Le titre doit contenir au moins 5 caractères.');
-                return false;
-            } else if (value.length > 255) {
-                showError(titreInput, errorElement, 'Le titre ne peut pas dépasser 255 caractères.');
-                return false;
-            } else {
-                clearError(titreInput, errorElement);
-                return true;
-            }
-        }
-
-        function validateDescription() {
-            const value = descriptionInput.value.trim();
-            const errorElement = document.getElementById('description-error');
-
-            if (value.length === 0) {
-                showError(descriptionInput, errorElement, 'La description est obligatoire.');
-                return false;
-            } else if (value.length < 20) {
-                showError(descriptionInput, errorElement, 'La description doit contenir au moins 20 caractères.');
-                return false;
-            } else {
-                clearError(descriptionInput, errorElement);
-                return true;
-            }
-        }
-
-        function validateDateDebut() {
-            const value = dateDebutInput.value;
-            const errorElement = document.getElementById('dateDebut-error');
-
-            if (!value) {
-                showError(dateDebutInput, errorElement, 'La date de début est obligatoire.');
-                return false;
-            }
-
-            const dateDebut = new Date(value);
-            const now = new Date();
-
-            if (dateDebut <= now) {
-                showError(dateDebutInput, errorElement, 'La date de début doit être dans le futur.');
-                return false;
-            } else {
-                clearError(dateDebutInput, errorElement);
-                return true;
-            }
-        }
-
-        function validateDateFin() {
-            const dateDebutValue = dateDebutInput.value;
-            const dateFinValue = dateFinInput.value;
-            const errorElement = document.getElementById('dateFin-error');
-
-            if (!dateFinValue) {
-                showError(dateFinInput, errorElement, 'La date de fin est obligatoire.');
-                return false;
-            }
-
-            if (!dateDebutValue) {
-                // Can't validate if dateDebut is not set
-                clearError(dateFinInput, errorElement);
-                return true;
-            }
-
-            const dateDebut = new Date(dateDebutValue);
-            const dateFin = new Date(dateFinValue);
-
-            if (dateFin <= dateDebut) {
-                showError(dateFinInput, errorElement, 'La date de fin doit être après la date de début.');
-                return false;
-            } else {
-                clearError(dateFinInput, errorElement);
-                return true;
-            }
-        }
-
-        function validateLieu() {
-            const value = lieuInput.value.trim();
-            const errorElement = document.getElementById('lieu-error');
-
-            if (value.length === 0) {
-                showError(lieuInput, errorElement, 'Le lieu est obligatoire.');
-                return false;
-            } else if (value.length < 3) {
-                showError(lieuInput, errorElement, 'Le lieu doit contenir au moins 3 caractères.');
-                return false;
-            } else if (value.length > 255) {
-                showError(lieuInput, errorElement, 'Le lieu ne peut pas dépasser 255 caractères.');
-                return false;
-            } else {
-                clearError(lieuInput, errorElement);
-                return true;
-            }
-        }
-
-        function showError(inputElement, errorElement, message) {
-            inputElement.classList.add('error');
-            errorElement.textContent = message;
-        }
-
-        function clearError(inputElement, errorElement) {
-            inputElement.classList.remove('error');
-            errorElement.textContent = '';
-        }
+    form.addEventListener('submit', e => {
+        if (![vTitre(), vDesc(), vDateDeb(), vDateFin(), vLieu(), vNbPlaces()].every(Boolean)) e.preventDefault();
     });
+});
 </script>
 {% endblock %}
