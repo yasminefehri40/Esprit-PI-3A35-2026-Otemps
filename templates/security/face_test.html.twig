@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test FaceID{% endblock %}
+
+{% block body %}
+<h1>Connexion FaceID réussie !</h1>
+<p>Email de l'utilisateur : <b>{{ email }}</b></p>
+<a href="{{ path('app_logout') }}">Se déconnecter</a>
+{% endblock %}

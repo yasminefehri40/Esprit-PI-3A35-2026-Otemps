@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    #[Route('/events', name: 'app_events')]
     public function index(EventRepository $eventRepository): Response
     {
         $events = $eventRepository->findActiveEvents();

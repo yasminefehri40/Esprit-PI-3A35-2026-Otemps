@@ -1,0 +1,31 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Nouvel objet{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_objet_index') }}">Objets</a>
+    <span class="sep">/</span>
+    <span class="current">Nouveau</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Nouvel objet patrimonial</h1>
+</div>
+
+<div class="card" style="padding: 2rem; max-width: 700px;">
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.categorie) }}
+        {{ form_row(form.descriptionHistorique) }}
+        {{ form_row(form.epoque) }}
+        {{ form_row(form.origine) }}
+        {{ form_row(form.materiaux) }}
+        <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+            <button type="submit" class="topbar-btn primary">Créer</button>
+            <a href="{{ path('admin_objet_index') }}" class="topbar-btn">Annuler</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

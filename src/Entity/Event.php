@@ -70,9 +70,9 @@ class Event
     #[ORM\Column(length: 50)]
     private string $statut = 'actif';
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'createdEvents')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $creator = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateurs::class)]
+    #[ORM\JoinColumn(name: 'creator_utilisateur_id', nullable: false)]
+    private ?Utilisateurs $creator = null;
 
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'event', cascade: ['remove'])]
     private Collection $participations;
@@ -146,12 +146,12 @@ class Event
         return $this;
     }
 
-    public function getCreator(): ?User
+    public function getCreator(): ?Utilisateurs
     {
         return $this->creator;
     }
 
-    public function setCreator(?User $creator): static
+    public function setCreator(?Utilisateurs $creator): static
     {
         $this->creator = $creator;
         return $this;

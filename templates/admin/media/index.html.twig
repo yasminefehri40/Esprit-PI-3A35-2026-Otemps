@@ -1,0 +1,74 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Médias{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <span class="current">Médias</span>
+{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{{ path('admin_media_new') }}" class="topbar-btn primary">+ Nouveau média</a>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .action-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 0.4rem; font-size: 0.8rem; font-weight: 500; border: none; cursor: pointer; text-decoration: none; }
+    .action-btn-edit   { background: #ede9fe; color: #6d28d9; }
+    .action-btn-edit:hover { background: #ddd6fe; }
+    .action-btn-delete { background: #fee2e2; color: #b91c1c; }
+    .action-btn-delete:hover { background: #fecaca; }
+    .media-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; }
+    .media-image { background: #dbeafe; color: #1d4ed8; }
+    .media-video { background: #dcfce7; color: #15803d; }
+    .media-audio { background: #fef9c3; color: #92400e; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gestion des médias</h1>
+        <p class="page-subtitle">{{ medias|length }} média(s) enregistré(s)</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Objet associé</th>
+                    <th>Lien</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for media in medias %}
+                    <tr>
+                        <td><span style="color: var(--text-muted); font-size: 0.8rem;">#{{ media.idMedia }}</span></td>
+                        <td><span class="media-badge media-{{ media.typeMedia }}">{{ media.typeMedia }}</span></td>
+                        <td><strong>{{ media.objet ? media.objet.nom : '—' }}</strong></td>
+                        <td style="color: var(--text-muted); font-size: 0.8rem; max-width: 300px; word-break: break-all;">{{ media.lienFichier|slice(0, 60) ~ (media.lienFichier|length > 60 ? '…' : '') }}</td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <a href="{{ path('admin_media_edit', {idMedia: media.idMedia}) }}" class="action-btn action-btn-edit">Modifier</a>
+                                <form method="post" action="{{ path('admin_media_delete', {idMedia: media.idMedia}) }}" onsubmit="return confirm('Supprimer ce média ?')" style="display:contents;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_media_' ~ media.idMedia) }}">
+                                    <button class="action-btn action-btn-delete" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-muted);">Aucun média enregistré.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

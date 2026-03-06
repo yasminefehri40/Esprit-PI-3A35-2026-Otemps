@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Utilisateurs;
 use App\Entity\Participation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProfileController extends AbstractController
 {
     #[Route('/profile/{id}/events', name: 'app_profile_events')]
-    public function events(User $user): Response
+    public function events(Utilisateurs $user): Response
     {
         return $this->render('profile/events.html.twig', [
             'user' => $user,

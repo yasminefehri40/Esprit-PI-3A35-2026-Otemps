@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Événements - {{ user.name }} - OTEMPS{% endblock %}
+{% block title %}Mes Événements - {{ user.nom ~ ' ' ~ user.prenom }} - OTEMPS{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <a href="{{ path('app_home') }}" style="color: #fef3c7; text-decoration: none;">Retour aux événements</a>
+                    <a href="{{ path('app_events') }}" style="color: #fef3c7; text-decoration: none;">Retour aux événements</a>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
             {% endfor %}
 
             <div style="background: linear-gradient(to right, #fef3c7, #ffedd5); border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #78350f; margin-bottom: 0.5rem;">{{ user.name }}</h2>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #78350f; margin-bottom: 0.5rem;">{{ user.nom ~ ' ' ~ user.prenom }}</h2>
                 <p style="color: #6b7280; margin: 0;">{{ user.email }}</p>
             </div>
 
@@ -120,7 +120,7 @@
                 {% else %}
                     <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 0.5rem; padding: 2rem; text-align: center;">
                         <p style="color: #6b7280; margin: 0;">Vous n'êtes inscrit à aucun événement pour le moment.</p>
-                        <a href="{{ path('app_home') }}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">
+                        <a href="{{ path('app_events') }}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">
                             Découvrir les événements
                         </a>
                     </div>

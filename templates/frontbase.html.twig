@@ -1,0 +1,87 @@
+{# templates/base.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ÔTEMPS - Valorisation du Patrimoine Culturel{% endblock %}</title>
+
+    {# CSS principal #}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    {% endblock %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    {# Bloc pour ajouter d'autres styles depuis une page spécifique #}
+</head>
+<body>
+    {# ---------------- En-tête ---------------- #}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                        <svg class="close-icon hidden" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-title">
+                        <h1>ÔTEMPS</h1>
+                        <p>Valorisation du Patrimoine Culturel</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <p>Préserver • Transmettre • Partager</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {# ---------------- Layout principal ---------------- #}
+    <div class="main-layout">
+        {# Sidebar #}
+       
+
+        {# Overlay mobile #}
+        <div class="overlay" id="overlay"></div>
+
+        {# Contenu principal #}
+        <main class="main-content">
+            <div class="content-container">
+                {# Bloc pour injecter le contenu spécifique d'une page #}
+                {% block body %}{% endblock %}
+            </div>
+
+            {# Footer #}
+            <footer class="footer">
+                <div class="footer-content">
+                    <p>© 2026 OTEMPS - Tous droits réservés</p>
+                    <p>Préservation du patrimoine culturel matériel et immatériel</p>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    {# Modal pour les détails #}
+    <div class="modal" id="modal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content" id="modalContent">
+            {# Contenu dynamique #}
+        </div>
+    </div>
+
+    {# JS principal #}
+    <script src="{{ asset('js/script.js') }}"></script>
+
+    {# Bloc pour ajouter des JS spécifiques à la page #}
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

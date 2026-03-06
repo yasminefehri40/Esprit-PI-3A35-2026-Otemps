@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Repository\CategorieRepository;
 use App\Repository\EventRepository;
+use App\Repository\MediaRepository;
+use App\Repository\ObjetRepository;
 use App\Repository\ParticipationRepository;
 use App\Repository\ReviewRepository;
-use App\Repository\UserRepository;
+use App\Repository\UtilisateursRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,9 +19,12 @@ class AdminDashboardController extends AbstractController
     #[Route('', name: 'admin_dashboard')]
     public function index(
         EventRepository        $eventRepo,
-        UserRepository         $userRepo,
+        UtilisateursRepository $userRepo,
         ParticipationRepository $participationRepo,
         ReviewRepository       $reviewRepo,
+        CategorieRepository    $categorieRepo,
+        ObjetRepository        $objetRepo,
+        MediaRepository        $mediaRepo,
     ): Response {
         $statusCounts    = $eventRepo->countByStatut();
         $totalEvents     = array_sum($statusCounts);
@@ -36,6 +42,10 @@ class AdminDashboardController extends AbstractController
 
         $recentEvents = $eventRepo->findRecent(6);
 
+        $totalCategories = $categorieRepo->count([]);
+        $totalObjets     = $objetRepo->count([]);
+        $totalMedias     = $mediaRepo->count([]);
+
         return $this->render('admin/dashboard/index.html.twig', [
             'totalEvents'        => $totalEvents,
             'activeEvents'       => $activeEvents,
@@ -49,6 +59,9 @@ class AdminDashboardController extends AbstractController
             'avgRating'          => $avgRating,
             'recentEvents'       => $recentEvents,
             'eventCount'         => $totalEvents,
+            'totalCategories'    => $totalCategories,
+            'totalObjets'        => $totalObjets,
+            'totalMedias'        => $totalMedias,
         ]);
     }
 }

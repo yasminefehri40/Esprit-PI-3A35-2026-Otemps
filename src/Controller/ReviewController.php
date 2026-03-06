@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Review;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,14 +16,12 @@ class ReviewController extends AbstractController
     public function add(
         Event $event,
         Request $request,
-        EntityManagerInterface $em,
-        UserRepository $userRepository
+        EntityManagerInterface $em
     ): Response {
-        $userId = $request->request->get('user_id');
-        $user = $userRepository->find($userId);
+        $user = $this->getUser();
 
         if (!$user) {
-            $this->addFlash('error', 'Utilisateur non trouvé.');
+            $this->addFlash('error', 'Vous devez être connecté pour laisser un avis.');
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 

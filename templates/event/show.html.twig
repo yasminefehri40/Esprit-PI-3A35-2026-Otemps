@@ -27,7 +27,7 @@
     <main class="main-content">
         <div class="content-container">
             <div style="margin-bottom: 1.5rem;">
-                <a href="{{ path('app_home') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
+                <a href="{{ path('app_events') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #d97706; text-decoration: none; font-weight: 500;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -192,27 +192,41 @@
                         </iframe>
                     </div>
 
+                    {% set currentUserParticipation = null %}
+                    {% if app.user %}
+                        {% for p in event.participations %}
+                            {% if p.user.id == app.user.id and p.statut == 'confirmée' %}
+                                {% set currentUserParticipation = p %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
                     {% if event.statut == 'annulé_météo' %}
                     <div style="background: linear-gradient(to bottom right, #fef2f2, #fee2e2); border: 2px solid #f87171; border-radius: 0.5rem; padding: 2rem; text-align: center; margin-bottom: 2rem;">
                         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #991b1b; margin-bottom: 0.75rem;">Inscriptions fermées</h3>
                         <p style="color: #7f1d1d; margin: 0;">Cet événement a été annulé pour cause de météo défavorable. Les inscriptions ne sont plus disponibles.</p>
                     </div>
-                    {% elseif event.placesRestantes > 0 %}
-                    <form id="registration-form" method="post" action="{{ path('app_event_participate', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
-                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #78350f; margin-bottom: 1.5rem;">Formulaire d'inscription</h3>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label for="user_id" style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Sélectionnez votre profil</label>
-                            <select name="user_id" id="user_id" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif;">
-                                <option value="">-- Choisir un utilisateur --</option>
-                                <option value="2">Alice Martin</option>
-                                <option value="3">Bob Dupont</option>
-                                <option value="4">Claire Bernard</option>
-                                <option value="5">David Rousseau</option>
-                            </select>
+                    {% elseif not app.user %}
+                    <div style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                        <p style="color: #78350f; margin: 0; font-size: 1rem;">Connectez-vous pour vous inscrire à cet événement.</p>
+                    </div>
+                    {% elseif currentUserParticipation %}
+                    <div style="background: linear-gradient(to bottom right, #dcfce7, #bbf7d0); border: 2px solid #4ade80; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #166534; margin-bottom: 0.25rem;">Vous êtes inscrit !</h3>
+                            <p style="color: #166534; margin: 0; font-size: 0.9rem;">Votre participation est confirmée.</p>
                         </div>
-
-                        <button id="registration-submit" type="submit" style="width: 100%; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;">
+                        <form method="post" action="{{ path('app_participation_cancel', {id: currentUserParticipation.id}) }}" onsubmit="return confirm('Annuler votre inscription ?')">
+                            <button type="submit" style="padding: 0.6rem 1.25rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #dc2626, #b91c1c); color: white; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+                                Annuler mon inscription
+                            </button>
+                        </form>
+                    </div>
+                    {% elseif event.placesRestantes > 0 %}
+                    <form method="post" action="{{ path('app_event_participate', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #78350f; margin-bottom: 0.5rem;">Formulaire d'inscription</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">Inscrit en tant que : <strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></p>
+                        <button type="submit" style="width: 100%; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; font-size: 1rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;">
                             Confirmer mon inscription
                         </button>
                     </form>
@@ -244,54 +258,21 @@
                             </div>
                         </div>
 
-                        {# Build list of confirmed participants who haven't reviewed yet #}
-                        {% set confirmed_ids = [] %}
-                        {% set already_reviewed_ids = [] %}
-                        {% set confirmed_participants_data = [] %}
-                        {% for p in event.participations %}
-                            {% if p.statut == 'confirmée' %}
-                                {% set confirmed_ids = confirmed_ids|merge([p.user.id]) %}
-                                {% set confirmed_participants_data = confirmed_participants_data|merge([{
-                                    'userId': p.user.id,
-                                    'cancelUrl': path('app_participation_cancel', {id: p.id})
-                                }]) %}
-                            {% endif %}
-                        {% endfor %}
-                        {% for r in event.reviews %}
-                            {% set already_reviewed_ids = already_reviewed_ids|merge([r.user.id]) %}
-                        {% endfor %}
-                        {% set eligible = [] %}
-                        {% for p in event.participations %}
-                            {% if p.statut == 'confirmée' and p.user.id not in already_reviewed_ids %}
-                                {% set eligible = eligible|merge([p]) %}
-                            {% endif %}
-                        {% endfor %}
+                        {# Check if logged-in user is a confirmed participant who hasn't reviewed yet #}
+                        {% set currentUserReviewed = false %}
+                        {% if app.user %}
+                            {% for r in event.reviews %}
+                                {% if r.user.id == app.user.id %}
+                                    {% set currentUserReviewed = true %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
 
-                        {# Pass data to JS for registration form integration #}
-                        {% set eligible_ids = [] %}
-                        {% for p in eligible %}
-                            {% set eligible_ids = eligible_ids|merge([p.user.id]) %}
-                        {% endfor %}
-                        <script>
-                            window.otempsEligibleIds = {{ eligible_ids|json_encode|raw }};
-                            window.otempsConfirmedParticipants = {{ confirmed_participants_data|json_encode|raw }};
-                        </script>
-
-                        {# Review form — only shown if at least one confirmed participant hasn't reviewed yet #}
-                        {% if eligible is not empty %}
+                        {# Review form — only for confirmed participants who haven't reviewed yet #}
+                        {% if app.user and currentUserParticipation and not currentUserReviewed %}
                         <form method="post" action="{{ path('app_event_review', {id: event.id}) }}" style="background: linear-gradient(to bottom right, #fffbeb, #fff7ed); border: 2px solid #fbbf24; border-radius: 0.5rem; padding: 2rem; margin-bottom: 2rem;">
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #78350f; margin-bottom: 1.5rem;">Laisser un avis</h4>
-                            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">Réservé aux participants confirmés • Un seul avis par événement</p>
-
-                            <div style="margin-bottom: 1.5rem;">
-                                <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Votre profil</label>
-                                <select name="user_id" id="review-user-select" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; font-family: 'Inter', sans-serif;">
-                                    <option value="">-- Choisir un participant --</option>
-                                    {% for p in eligible %}
-                                        <option value="{{ p.user.id }}">{{ p.user.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #78350f; margin-bottom: 0.5rem;">Laisser un avis</h4>
+                            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">En tant que : <strong>{{ app.user.nom }} {{ app.user.prenom }}</strong></p>
 
                             <div style="margin-bottom: 1.5rem;">
                                 <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.75rem;">Note</label>
@@ -326,7 +307,7 @@
                                     <div style="background: rgba(255,255,255,0.9); border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.07);">
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
                                             <div>
-                                                <span style="font-weight: 600; color: #374151;">{{ review.user.name }}</span>
+                                                <span style="font-weight: 600; color: #374151;">{{ review.user.nom ~ ' ' ~ review.user.prenom }}</span>
                                                 <span style="color: #9ca3af; font-size: 0.8rem; margin-left: 0.75rem;">{{ review.createdAt|date('d/m/Y') }}</span>
                                             </div>
                                             <div style="display: flex; gap: 2px;">
@@ -395,70 +376,6 @@
             });
         }
 
-        // ── Registration form → cancel / review integration ──
-        const registrationForm = document.getElementById('registration-form');
-        const registrationSelect = document.getElementById('user_id');
-        const submitBtn = document.getElementById('registration-submit');
-        const reviewSection = document.getElementById('review-section');
-        const reviewUserSelect = document.getElementById('review-user-select');
-
-        const eligibleIds = window.otempsEligibleIds || [];
-        const confirmedParticipants = window.otempsConfirmedParticipants || [];
-
-        // Build userId → cancelUrl map
-        const confirmedMap = {};
-        confirmedParticipants.forEach(function (p) { confirmedMap[p.userId] = p; });
-
-        const originalAction = registrationForm ? registrationForm.action : '';
-        const originalBtnText = 'Confirmer mon inscription';
-        const originalBtnStyle = 'linear-gradient(to right, #d97706, #ea580c)';
-
-        if (registrationSelect) {
-            registrationSelect.addEventListener('change', function () {
-                const selectedId = parseInt(this.value, 10);
-
-                if (!selectedId) {
-                    // Reset to original registration state
-                    if (registrationForm) registrationForm.action = originalAction;
-                    if (submitBtn) {
-                        submitBtn.textContent = originalBtnText;
-                        submitBtn.style.background = originalBtnStyle;
-                    }
-                    return;
-                }
-
-                const confirmedData = confirmedMap[selectedId];
-
-                if (confirmedData) {
-                    // User is already a confirmed participant → switch to cancel mode
-                    if (registrationForm) registrationForm.action = confirmedData.cancelUrl;
-                    if (submitBtn) {
-                        submitBtn.textContent = 'Annuler mon inscription';
-                        submitBtn.style.background = 'linear-gradient(to right, #dc2626, #b91c1c)';
-                    }
-
-                    // Scroll to review section for any confirmed participant
-                    if (reviewSection) {
-                        reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        reviewSection.style.transition = 'box-shadow 0.4s';
-                        reviewSection.style.boxShadow = '0 0 0 3px #fbbf24';
-                        setTimeout(function () { reviewSection.style.boxShadow = ''; }, 2000);
-                    }
-
-                    // Pre-select user in review form if they haven't reviewed yet
-                    if (eligibleIds.includes(selectedId) && reviewUserSelect) {
-                        reviewUserSelect.value = String(selectedId);
-                    }
-                } else {
-                    // Not a confirmed participant → normal registration mode
-                    if (registrationForm) registrationForm.action = originalAction;
-                    if (submitBtn) {
-                        submitBtn.textContent = originalBtnText;
-                        submitBtn.style.background = originalBtnStyle;
-                    }
-                }
-            });
-        }
     });
 </script>
 {% endblock %}

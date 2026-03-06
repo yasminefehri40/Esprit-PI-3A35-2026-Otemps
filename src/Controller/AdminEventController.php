@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
-use App\Repository\UserRepository;
+use App\Repository\UtilisateursRepository;
 use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,10 +57,10 @@ class AdminEventController extends AbstractController
     }
 
     #[Route('/new', name: 'admin_event_new')]
-    public function new(Request $request, EntityManagerInterface $em, UserRepository $userRepository, ValidatorInterface $validator): Response
+    public function new(Request $request, EntityManagerInterface $em, UtilisateursRepository $utilisateursRepository, ValidatorInterface $validator): Response
     {
         if ($request->isMethod('POST')) {
-            $creator = $userRepository->find(1); // Static admin user
+            $creator = $utilisateursRepository->find(1); // Static admin user
 
             $event = new Event();
             $event->setTitre($request->request->get('titre'));

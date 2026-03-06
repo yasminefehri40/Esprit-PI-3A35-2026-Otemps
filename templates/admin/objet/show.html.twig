@@ -1,0 +1,105 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ objet.nom }}{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_objet_index') }}">Objets</a>
+    <span class="sep">/</span>
+    <span class="current">{{ objet.nom }}</span>
+{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{{ path('admin_objet_edit', {idObjet: objet.idObjet}) }}" class="topbar-btn">Modifier</a>
+    <a href="{{ path('admin_media_new') }}" class="topbar-btn primary">+ Ajouter un média</a>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .info-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+    .info-card b { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); display: block; margin-bottom: 0.25rem; }
+    .info-card span { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .media-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; }
+    .media-image { background: #dbeafe; color: #1d4ed8; }
+    .media-video { background: #dcfce7; color: #15803d; }
+    .media-audio { background: #fef9c3; color: #92400e; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ objet.nom }}</h1>
+        <p class="page-subtitle">{{ objet.categorie ? objet.categorie.nomCategorie : 'Sans catégorie' }}</p>
+    </div>
+</div>
+
+<div class="info-grid">
+    <div class="info-card">
+        <b>Époque</b>
+        <span>{{ objet.epoque ?: 'Non spécifiée' }}</span>
+    </div>
+    <div class="info-card">
+        <b>Origine</b>
+        <span>{{ objet.origine ?: 'Non spécifiée' }}</span>
+    </div>
+    <div class="info-card">
+        <b>Matériaux</b>
+        <span>{{ objet.materiaux ?: 'Non spécifiés' }}</span>
+    </div>
+    <div class="info-card">
+        <b>Médias</b>
+        <span>{{ objet.medias|length }}</span>
+    </div>
+</div>
+
+{% if objet.descriptionHistorique %}
+<div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <strong style="display:block; margin-bottom:0.5rem;">Description historique</strong>
+    <p style="color: var(--text-muted); line-height: 1.7; margin: 0;">{{ objet.descriptionHistorique }}</p>
+</div>
+{% endif %}
+
+<h2 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text);">Médias associés ({{ objet.medias|length }})</h2>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Lien / Chemin</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for media in objet.medias %}
+                    <tr>
+                        <td><span class="media-badge media-{{ media.typeMedia }}">{{ media.typeMedia }}</span></td>
+                        <td style="color: var(--text-muted); font-size: 0.85rem; word-break: break-all;">{{ media.lienFichier }}</td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <a href="{{ media.lienFichier }}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: none;">Ouvrir</a>
+                                <a href="{{ path('admin_media_edit', {idMedia: media.idMedia}) }}" style="color: #6d28d9; font-size: 0.8rem; text-decoration: none;">Modifier</a>
+                                <form method="post" action="{{ path('admin_media_delete', {idMedia: media.idMedia}) }}" onsubmit="return confirm('Supprimer ce média ?')" style="display:contents;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_media_' ~ media.idMedia) }}">
+                                    <button type="submit" style="background:none; border:none; color:#b91c1c; font-size:0.8rem; cursor:pointer; padding:0;">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align:center; padding: 2rem; color: var(--text-muted);">Aucun média pour cet objet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ path('admin_objet_index') }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">← Retour aux objets</a>
+</div>
+{% endblock %}

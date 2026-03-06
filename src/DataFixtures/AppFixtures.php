@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
+use App\Entity\Utilisateurs;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -13,10 +13,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Create admin user
-        $admin = new User();
-        $admin->setName('Admin OTEMPS');
+        $admin = new Utilisateurs();
+        $admin->setNom('Admin');
+        $admin->setPrenom('OTEMPS');
         $admin->setEmail('admin@otemps.fr');
-        $admin->setIsAdmin(true);
+        $admin->setMotdepasse('$2y$13$placeholder_hash_for_fixtures');
+        $admin->setDateinscription(new \DateTime());
+        $admin->setRole('ROLE_ADMIN');
         $manager->persist($admin);
 
         // Add reference for use in EventFixtures
@@ -24,17 +27,20 @@ class AppFixtures extends Fixture
 
         // Create regular users
         $users = [
-            ['name' => 'Alice Martin', 'email' => 'alice.martin@example.com'],
-            ['name' => 'Bob Dupont', 'email' => 'bob.dupont@example.com'],
-            ['name' => 'Claire Bernard', 'email' => 'claire.bernard@example.com'],
-            ['name' => 'David Rousseau', 'email' => 'david.rousseau@example.com'],
+            ['nom' => 'Martin', 'prenom' => 'Alice', 'email' => 'alice.martin@example.com'],
+            ['nom' => 'Dupont', 'prenom' => 'Bob', 'email' => 'bob.dupont@example.com'],
+            ['nom' => 'Bernard', 'prenom' => 'Claire', 'email' => 'claire.bernard@example.com'],
+            ['nom' => 'Rousseau', 'prenom' => 'David', 'email' => 'david.rousseau@example.com'],
         ];
 
         foreach ($users as $userData) {
-            $user = new User();
-            $user->setName($userData['name']);
+            $user = new Utilisateurs();
+            $user->setNom($userData['nom']);
+            $user->setPrenom($userData['prenom']);
             $user->setEmail($userData['email']);
-            $user->setIsAdmin(false);
+            $user->setMotdepasse('$2y$13$placeholder_hash_for_fixtures');
+            $user->setDateinscription(new \DateTime());
+            $user->setRole('ROLE_USER');
             $manager->persist($user);
         }
 

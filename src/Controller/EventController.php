@@ -4,11 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Participation;
-use App\Repository\UserRepository;
 use App\Service\WeatherService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -28,15 +26,12 @@ class EventController extends AbstractController
     #[Route('/event/{id}/participate', name: 'app_event_participate', methods: ['POST'])]
     public function participate(
         Event $event,
-        Request $request,
-        EntityManagerInterface $em,
-        UserRepository $userRepository
+        EntityManagerInterface $em
     ): Response {
-        $userId = $request->request->get('user_id');
-        $user = $userRepository->find($userId);
+        $user = $this->getUser();
 
         if (!$user) {
-            $this->addFlash('error', 'Utilisateur non trouvé.');
+            $this->addFlash('error', 'Vous devez être connecté pour vous inscrire.');
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 
@@ -50,7 +45,7 @@ class EventController extends AbstractController
 
         // Check if there are available places
         if ($event->getPlacesRestantes() <= 0) {
-            $this->addFlash('error', 'Désolé, il n\'y a plus de places disponibles pour cet événement.');
+            $this->addFlash('error', "Désolé, il n'y a plus de places disponibles pour cet événement.");
             return $this->redirectToRoute('app_event_show', ['id' => $event->getId()]);
         }
 

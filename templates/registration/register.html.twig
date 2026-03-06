@@ -1,0 +1,360 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .auth-page {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    /* Left branding panel */
+    .auth-brand {
+        flex: 1;
+        background: linear-gradient(160deg, #1c1917 0%, #292524 50%, #1c1917 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-brand::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d97706' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .auth-brand-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        max-width: 420px;
+    }
+
+    .auth-brand-logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 4rem;
+        font-weight: 700;
+        color: #fef3c7;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-brand-tagline {
+        color: #d97706;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-brand-desc {
+        color: #a8a29e;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-brand-divider {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, #d97706, #ea580c);
+        margin: 0 auto 2.5rem;
+        border-radius: 2px;
+    }
+
+    .auth-brand-features {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: left;
+    }
+
+    .auth-brand-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #d6d3d1;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .auth-brand-feature-icon {
+        width: 32px;
+        height: 32px;
+        background: rgba(217, 119, 6, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* Right form panel */
+    .auth-panel {
+        width: 500px;
+        flex-shrink: 0;
+        background: #fafaf9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+    }
+
+    .auth-form-wrap {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .auth-form-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1c1917;
+        margin-bottom: 0.4rem;
+    }
+
+    .auth-form-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+    }
+
+    .auth-field {
+        margin-bottom: 1.25rem;
+    }
+
+    .auth-field label {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-field input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 0.5rem;
+        background: white;
+        color: #1c1917;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .auth-field input:focus {
+        outline: none;
+        border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+    }
+
+    .auth-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .auth-submit {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(to right, #d97706, #ea580c);
+        color: white;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 0.5rem;
+        box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+    }
+
+    .auth-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+    }
+
+    .auth-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .auth-footer p { margin-bottom: 0.75rem; }
+
+    .authh-login-btn {
+        display: inline-block;
+        padding: 0.6rem 1.5rem;
+        background: #1c1917;
+        color: white;
+        text-decoration: none;
+        border-radius: 0.4rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: background 0.2s;
+    }
+
+    .authh-login-btn:hover { background: #292524; }
+
+    /* Symfony form widget overrides */
+    .auth-field select,
+    .auth-field textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 0.5rem;
+        background: white;
+        color: #1c1917;
+        transition: border-color 0.2s;
+    }
+
+    .auth-field select:focus,
+    .auth-field textarea:focus {
+        outline: none;
+        border-color: #d97706;
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+    }
+
+    .auth-field ul {
+        margin: 0.4rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .auth-field li {
+        font-size: 0.8rem;
+        color: #dc2626;
+        font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+        .auth-brand { display: none; }
+        .auth-panel { width: 100%; padding: 2rem 1.5rem; }
+        .auth-field-row { grid-template-columns: 1fr; }
+    }
+
+    /* Break out of base.html.twig layout wrappers */
+    .main-layout { display: block !important; }
+    .main-content { overflow: visible !important; }
+    .content-container {
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+</style>
+
+<div class="auth-page">
+    {# Left branding panel #}
+    <div class="auth-brand">
+        <div class="auth-brand-content">
+            <div class="auth-brand-logo">OTEMPS</div>
+            <div class="auth-brand-tagline">Valorisation du Patrimoine Culturel</div>
+            <div class="auth-brand-divider"></div>
+            <p class="auth-brand-desc">
+                Rejoignez notre communauté dédiée à la préservation et à la valorisation du patrimoine culturel matériel et immatériel.
+            </p>
+            <div class="auth-brand-features">
+                <div class="auth-brand-feature">
+                    <div class="auth-brand-feature-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    Accédez à tous les événements culturels
+                </div>
+                <div class="auth-brand-feature">
+                    <div class="auth-brand-feature-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                            <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"></path>
+                        </svg>
+                    </div>
+                    Parcourez la galerie patrimoine
+                </div>
+                <div class="auth-brand-feature">
+                    <div class="auth-brand-feature-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    Laissez vos avis sur les événements
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Right form panel #}
+    <div class="auth-panel">
+        <div class="auth-form-wrap">
+            <h1 class="auth-form-title">Créer un compte</h1>
+            <p class="auth-form-subtitle">Rejoignez OTEMPS en quelques secondes.</p>
+
+            {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <div class="auth-field-row">
+                    <div class="auth-field">
+                        {{ form_label(registrationForm.nom) }}
+                        {{ form_widget(registrationForm.nom, {'attr': {'placeholder': 'Dupont'}}) }}
+                        {{ form_errors(registrationForm.nom) }}
+                    </div>
+                    <div class="auth-field">
+                        {{ form_label(registrationForm.prenom) }}
+                        {{ form_widget(registrationForm.prenom, {'attr': {'placeholder': 'Jean'}}) }}
+                        {{ form_errors(registrationForm.prenom) }}
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'votre@email.com'}}) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+
+                <div class="auth-field">
+                    {{ form_label(registrationForm.motdepasse, 'Mot de passe') }}
+                    {{ form_widget(registrationForm.motdepasse, {'attr': {'placeholder': '••••••••'}}) }}
+                    {{ form_errors(registrationForm.motdepasse) }}
+                </div>
+
+                {{ form_widget(registrationForm._token) }}
+                <button type="submit" class="auth-submit">S'inscrire</button>
+            {{ form_end(registrationForm, {'render_rest': false}) }}
+
+            <div class="auth-footer">
+                <p>Vous avez déjà un compte ?</p>
+                <a href="{{ path('app_login') }}" class="authh-login-btn">Se connecter</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

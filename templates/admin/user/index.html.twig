@@ -1,0 +1,88 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block breadcrumb %}
+    <span>/</span>
+    <span>Utilisateurs</span>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .search-btn { padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; }
+    .search-btn:hover { background: var(--primary-dark); }
+    .action-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 0.4rem; font-size: 0.8rem; font-weight: 500; border: none; cursor: pointer; text-decoration: none; }
+    .action-btn-edit   { background: #ede9fe; color: #6d28d9; }
+    .action-btn-edit:hover { background: #ddd6fe; }
+    .action-btn-delete { background: #fee2e2; color: #b91c1c; }
+    .action-btn-delete:hover { background: #fecaca; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gestion des utilisateurs</h1>
+        <p class="page-subtitle">{{ users|length }} utilisateur(s) enregistré(s)</p>
+    </div>
+    <div style="display:flex; gap:0.75rem; align-items:center;">
+        <form method="get" action="{{ path('admin_user_search') }}" style="display:flex; gap:0.5rem;">
+            <input type="text" name="search" placeholder="Rechercher par nom…" value="{{ search ?? '' }}"
+                style="padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.875rem; outline: none; width: 220px;">
+            <button type="submit" class="search-btn">🔍</button>
+        </form>
+        <a href="{{ path('admin_user_sort', { order: 'az' }) }}" class="topbar-btn">A → Z</a>
+        <a href="{{ path('admin_user_sort', { order: 'za' }) }}" class="topbar-btn">Z → A</a>
+        <a href="{{ path('admin_user_new') }}" class="topbar-btn primary">+ Ajouter</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Date inscription</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td><span style="color: var(--text-muted); font-size: 0.8rem;">#{{ user.id }}</span></td>
+                        <td><strong>{{ user.nom }}</strong></td>
+                        <td>{{ user.prenom }}</td>
+                        <td style="color: var(--text-muted);">{{ user.email }}</td>
+                        <td>
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                <span class="badge badge-primary">Admin</span>
+                            {% else %}
+                                <span class="badge badge-success">Utilisateur</span>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--text-muted); font-size: 0.85rem;">{{ user.dateinscription ? user.dateinscription|date('d/m/Y H:i') : '-' }}</td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="action-btn action-btn-edit">Modifier</a>
+                                <form method="post" action="{{ path('admin_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Supprimer cet utilisateur ?')" style="display:contents;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                    <button class="action-btn action-btn-delete" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Aucun utilisateur trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

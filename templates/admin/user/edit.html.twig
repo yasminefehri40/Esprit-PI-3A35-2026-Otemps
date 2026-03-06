@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier utilisateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/backend.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="backend-container">
+    <h1>Modifier utilisateur</h1>
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.nom) }}
+            {{ form_widget(form.nom) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.prenom) }}
+            {{ form_widget(form.prenom) }}
+            {{ form_errors(form.prenom) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.motdepasse, 'Mot de passe') }}
+            {{ form_widget(form.motdepasse) }}
+            {{ form_errors(form.motdepasse) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.role, 'Rôles') }}
+            {{ form_widget(form.role) }}
+            {{ form_errors(form.role) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_user_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

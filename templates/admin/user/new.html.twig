@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter utilisateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/backend.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="backend-container">
+    <h1>Ajouter un utilisateur</h1>
+
+    {{ form_start(form) }}
+
+        {{ form_row(form.nom) }}
+        {{ form_row(form.prenom) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.motdepasse) }}
+        {{ form_row(form.role) }}
+
+        <button class="btn btn-primary">Créer</button>
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_user_index') }}" class="btn btn-secondary">
+        Retour
+    </a>
+</div>
+{% endblock %}

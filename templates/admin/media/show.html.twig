@@ -1,0 +1,26 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Média #{{ media.idMedia }}{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_media_index') }}">Médias</a>
+    <span class="sep">/</span>
+    <span class="current">#{{ media.idMedia }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Détail du média</h1>
+</div>
+
+<div class="card" style="padding: 1.5rem; max-width: 600px;">
+    <p><strong>Type :</strong> {{ media.typeMedia }}</p>
+    <p><strong>Objet associé :</strong> {{ media.objet ? media.objet.nom : '—' }}</p>
+    <p><strong>Lien :</strong> <a href="{{ media.lienFichier }}" target="_blank" style="color: var(--primary);">{{ media.lienFichier }}</a></p>
+    <div style="margin-top: 1rem; display:flex; gap:0.75rem;">
+        <a href="{{ path('admin_media_edit', {idMedia: media.idMedia}) }}" class="topbar-btn primary">Modifier</a>
+        <a href="{{ path('admin_media_index') }}" class="topbar-btn">Retour</a>
+    </div>
+</div>
+{% endblock %}

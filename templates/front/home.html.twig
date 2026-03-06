@@ -1,0 +1,278 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Galerie Royale OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --gold: #c5a059;
+        --wall: #f8f9fa;
+        --frame-border: #2c2c2c;
+    }
+
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .museum-bg {
+        background: linear-gradient(to bottom, #fdfbfb 0%, #ebedee 100%);
+        min-height: 100vh;
+        padding-bottom: 100px;
+    }
+
+    .search-zone {
+        padding: 60px 0;
+        background: white;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 40px;
+    }
+
+    .search-minimal {
+        border: none;
+        border-bottom: 1px solid #ccc;
+        border-radius: 0;
+        font-size: 2rem;
+        font-weight: 300;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        transition: border-color 0.4s;
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        outline: none;
+    }
+
+    .search-minimal:focus {
+        box-shadow: none;
+        border-color: var(--gold);
+    }
+
+    .btn-category {
+        background: none;
+        border: none;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 0.8rem;
+        margin: 0 15px;
+        padding: 10px 0;
+        position: relative;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-category.active, .btn-category:hover {
+        color: var(--gold);
+    }
+
+    .btn-category.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 25%;
+        width: 50%;
+        height: 2px;
+        background: var(--gold);
+    }
+
+    .gallery-container {
+        perspective: 2000px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 80px;
+        padding: 40px;
+    }
+
+    .art-piece {
+        width: 350px;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        border: 1px solid #efefef;
+        transform: rotateX(5deg) rotateY(-10deg);
+        transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .art-piece:nth-child(even) {
+        transform: rotateX(5deg) rotateY(10deg);
+    }
+
+    .art-piece:hover {
+        transform: rotateX(0deg) rotateY(0deg) scale(1.05) translateZ(100px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        z-index: 10;
+    }
+
+    .image-box {
+        width: 100%;
+        height: 450px;
+        overflow: hidden;
+        border: 8px solid #fff;
+        outline: 1px solid #ddd;
+        background: #fdfdfd;
+    }
+
+    .image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 1s;
+    }
+
+    .art-piece:hover .image-box img {
+        transform: scale(1.1);
+    }
+
+    .label-content {
+        padding-top: 20px;
+        text-align: center;
+    }
+
+    .label-content h3 {
+        font-size: 1.4rem;
+        color: #1a1a1a;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .label-content span {
+        color: var(--gold);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+    }
+
+    .museum-floor {
+        height: 10px;
+        background: rgba(197, 160, 89, 0.1);
+        width: 80%;
+        margin: -10px auto 0;
+        filter: blur(15px);
+        border-radius: 50%;
+    }
+
+    .hidden { display: none !important; }
+
+    .museum-header {
+        background: white;
+        border-bottom: 1px solid #eee;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .museum-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .museum-header a {
+        color: var(--gold);
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+    }
+</style>
+
+<div class="museum-header">
+    <h1>OTEMPS — Galerie Patrimoine</h1>
+    <a href="{{ path('app_events') }}">← Retour aux événements</a>
+</div>
+
+<div class="museum-bg">
+    <div class="search-zone text-center">
+        <input type="text" id="searchInput" class="search-minimal mb-5" placeholder="Rechercher une pièce...">
+
+        <div style="display:flex; justify-content:center; flex-wrap:wrap; margin-top:2rem;">
+            <button class="btn-category active" onclick="filterData('all', this)">Collection Complète</button>
+            {% for categorie in categories %}
+                <button class="btn-category" onclick="filterData('cat-{{ categorie.idCategorie }}', this)">
+                    {{ categorie.nomCategorie }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <div class="gallery-container" id="catalogGrid">
+            {% for categorie in categories %}
+                {% for objet in categorie.objets %}
+                    {% set catClass = 'cat-' ~ categorie.idCategorie %}
+
+                    <div class="art-piece objet-card {{ catClass }}"
+                         data-name="{{ objet.nom|lower }}"
+                         onclick="location.href='{{ path('front_objet_show', {'idObjet': objet.idObjet}) }}'">
+
+                        <div class="image-box">
+                            {% if objet.medias is not empty %}
+                                {% set media = objet.medias[0] %}
+                                <img src="{{ media.lienFichier starts with 'http' ? media.lienFichier : asset('uploads/medias/' ~ media.lienFichier) }}" alt="{{ objet.nom }}">
+                            {% else %}
+                                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:3rem;">🏛️</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="label-content">
+                            <h3>{{ objet.nom }}</h3>
+                            <span>{{ categorie.nomCategorie }}</span>
+                        </div>
+                        <div class="museum-floor"></div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="noResult" style="text-align:center; margin-top:3rem; display:none;">
+    <p style="color:#6b7280; font-size:1.5rem;">L'œuvre recherchée n'est pas exposée ici.</p>
+</div>
+
+<script>
+    let activeCategory = 'all';
+
+    function filterData(catId, btn) {
+        document.querySelectorAll('.btn-category').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = catId;
+        runAllFilters();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', runAllFilters);
+
+    function runAllFilters() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.objet-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name') || "";
+            const matchCat = (activeCategory === 'all' || card.classList.contains(activeCategory));
+            const matchSearch = name.includes(query);
+
+            if (matchCat && matchSearch) {
+                card.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('noResult').style.display = visibleCount > 0 ? 'none' : 'block';
+    }
+</script>
+{% endblock %}

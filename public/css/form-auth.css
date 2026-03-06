@@ -1,0 +1,112 @@
+/* form-auth.css */
+
+/* Conteneur formulaire */
+.auth-form {
+    width: 100%;
+    max-width: 360px;
+    background: #ffffff;
+    padding: 24px 26px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    margin: 0 auto 20px auto;
+}
+
+/* Titres du formulaire */
+.auth-form h1,
+.auth-form h2 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Groupe de champs */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Boutons */
+.auth-btn,
+.auth-btn-reset {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.auth-btn {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.auth-btn:hover {
+    background-color: #1e40af;
+}
+
+.auth-btn-reset {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.auth-btn-reset:hover {
+    background-color: #047857;
+}
+
+/* Messages d’erreur sous champ */
+.form-group ul {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.form-group li {
+    font-size: 12px;
+    color: #dc2626;
+}
+
+/* Footer / liens */
+.auth-footer {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.auth-footer a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

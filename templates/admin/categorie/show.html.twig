@@ -1,0 +1,65 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ categorie.nomCategorie }}{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <a href="{{ path('admin_categorie_index') }}">Catégories</a>
+    <span class="sep">/</span>
+    <span class="current">{{ categorie.nomCategorie }}</span>
+{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{{ path('admin_categorie_edit', {idCategorie: categorie.idCategorie}) }}" class="topbar-btn">Modifier</a>
+    <a href="{{ path('admin_objet_new') }}" class="topbar-btn primary">+ Nouvel objet</a>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ categorie.nomCategorie }}</h1>
+    <p class="page-subtitle">{{ categorie.descriptionType ?: 'Aucune description.' }}</p>
+</div>
+
+<div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <p><strong>Nombre d'objets :</strong> {{ categorie.objets|length }}</p>
+</div>
+
+<h2 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text);">Objets de cette catégorie</h2>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Époque</th>
+                    <th>Origine</th>
+                    <th>Médias</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for objet in categorie.objets %}
+                    <tr>
+                        <td><strong>{{ objet.nom }}</strong></td>
+                        <td style="color: var(--text-muted);">{{ objet.epoque ?: '—' }}</td>
+                        <td style="color: var(--text-muted);">{{ objet.origine ?: '—' }}</td>
+                        <td><span class="badge badge-success">{{ objet.medias|length }}</span></td>
+                        <td>
+                            <a href="{{ path('admin_objet_show', {idObjet: objet.idObjet}) }}" style="color: var(--primary); text-decoration: none; font-size: 0.85rem;">Voir</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-muted);">Aucun objet dans cette catégorie.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ path('admin_categorie_index') }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">← Retour aux catégories</a>
+</div>
+{% endblock %}

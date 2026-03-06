@@ -23,3 +23,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # WeatherService uses Open-Meteo (100% free, no API key needed) — autowired automatically
+
+    Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator:
+        alias: security.authenticator.form_login.main
+        public: true

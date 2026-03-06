@@ -1,0 +1,77 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Objets{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <span class="current">Objets</span>
+{% endblock %}
+
+{% block topbar_actions %}
+    <a href="{{ path('admin_objet_new') }}" class="topbar-btn primary">+ Nouvel objet</a>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .action-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 0.4rem; font-size: 0.8rem; font-weight: 500; border: none; cursor: pointer; text-decoration: none; }
+    .action-btn-edit   { background: #ede9fe; color: #6d28d9; }
+    .action-btn-edit:hover { background: #ddd6fe; }
+    .action-btn-delete { background: #fee2e2; color: #b91c1c; }
+    .action-btn-delete:hover { background: #fecaca; }
+    .action-btn-view   { background: #dbeafe; color: #1d4ed8; }
+    .action-btn-view:hover { background: #bfdbfe; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gestion des objets</h1>
+        <p class="page-subtitle">{{ objets|length }} objet(s) enregistré(s)</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Catégorie</th>
+                    <th>Époque</th>
+                    <th>Origine</th>
+                    <th>Médias</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for objet in objets %}
+                    <tr>
+                        <td><span style="color: var(--text-muted); font-size: 0.8rem;">#{{ objet.idObjet }}</span></td>
+                        <td><strong>{{ objet.nom }}</strong></td>
+                        <td style="color: var(--text-muted);">{{ objet.categorie ? objet.categorie.nomCategorie : '—' }}</td>
+                        <td style="color: var(--text-muted);">{{ objet.epoque ?: '—' }}</td>
+                        <td style="color: var(--text-muted);">{{ objet.origine ?: '—' }}</td>
+                        <td><span class="badge badge-success">{{ objet.medias|length }}</span></td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <a href="{{ path('admin_objet_show', {idObjet: objet.idObjet}) }}" class="action-btn action-btn-view">Voir</a>
+                                <a href="{{ path('admin_objet_edit', {idObjet: objet.idObjet}) }}" class="action-btn action-btn-edit">Modifier</a>
+                                <form method="post" action="{{ path('admin_objet_delete', {idObjet: objet.idObjet}) }}" onsubmit="return confirm('Supprimer cet objet ?')" style="display:contents;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_objet_' ~ objet.idObjet) }}">
+                                    <button class="action-btn action-btn-delete" type="submit">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Aucun objet enregistré.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

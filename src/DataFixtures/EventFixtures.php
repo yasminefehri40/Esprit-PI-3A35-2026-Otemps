@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Event;
-use App\Entity\User;
+use App\Entity\Utilisateurs;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -12,7 +12,7 @@ class EventFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        /** @var User $admin */
+        /** @var Utilisateurs $admin */
         $admin = $this->getReference(AppFixtures::ADMIN_USER_REFERENCE);
 
         // Sample events from database.sql

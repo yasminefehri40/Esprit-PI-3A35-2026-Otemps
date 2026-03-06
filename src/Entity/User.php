@@ -25,13 +25,10 @@ class User
     #[ORM\Column]
     private ?bool $isAdmin = false;
 
-    #[ORM\OneToMany(targetEntity: Event::class, mappedBy: 'creator')]
     private Collection $createdEvents;
 
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user')]
     private Collection $participations;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
     private Collection $reviews;
 
     public function __construct()

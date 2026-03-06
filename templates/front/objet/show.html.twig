@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ objet.nom }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<style>
+    .fiche-art {
+        max-width: 900px;
+        margin: 50px auto;
+        background: white;
+        padding: 60px;
+        border-radius: 4px;
+        box-shadow: 0 0 50px rgba(0,0,0,0.05);
+        border-top: 10px solid #d35400;
+    }
+
+    .main-image-container {
+        width: 100%;
+        max-height: 500px;
+        margin-bottom: 40px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fdfdfd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #eee;
+    }
+    .main-image-container img {
+        max-width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .description-box {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #333;
+        margin: 40px 0;
+        text-align: justify;
+    }
+
+    .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        background: #fdfaf8;
+        padding: 30px;
+        border: 1px solid #eee;
+    }
+
+    .meta-item b { color: #d35400; text-transform: uppercase; font-size: 0.8rem; display: block; }
+    .meta-item span { font-size: 1.1rem; font-weight: bold; }
+
+    .btn-pdf {
+        background: #2c3e50;
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 2px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 40px;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #d35400;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    @media print {
+        .no-print, nav, footer, .btn-pdf, .back-link { display: none !important; }
+        body { background: white; }
+        .fiche-art { box-shadow: none; border: none; width: 100%; margin: 0; padding: 0; }
+        .main-image-container { border: none; }
+
+        @page { margin: 1cm; }
+    }
+</style>
+
+<div class="container">
+    <div class="fiche-art">
+        <a href="{{ path('front_home') }}" class="back-link no-print">← Retour à la galerie</a>
+
+        <div class="text-center" style="text-align:center;">
+            <h1 style="font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:bold; margin-bottom:0.5rem;">{{ objet.nom }}</h1>
+            <hr style="width: 100px; margin: 20px auto; border-top: 3px solid #d35400; border-bottom:none;">
+        </div>
+
+        <div class="main-image-container">
+            {% if objet.medias is not empty %}
+                {% set media = objet.medias[0] %}
+                {% if media.lienFichier starts with 'http' %}
+                    <img src="{{ media.lienFichier }}" alt="{{ objet.nom }}">
+                {% else %}
+                    <img src="{{ asset('uploads/medias/' ~ media.lienFichier) }}" alt="{{ objet.nom }}">
+                {% endif %}
+            {% else %}
+                <div style="padding:3rem; color:#6b7280; font-size:1.2rem;">Aucun média disponible pour cette œuvre</div>
+            {% endif %}
+        </div>
+
+        <div class="description-box">
+            <h4 style="font-weight:bold;">Historique de l'objet</h4>
+            <p>{{ objet.descriptionHistorique ?: 'Aucune description historique renseignée.' }}</p>
+        </div>
+
+        <div class="metadata-grid">
+            <div class="meta-item">
+                <b>Époque</b>
+                <span>{{ objet.epoque ?? 'Non spécifiée' }}</span>
+            </div>
+            <div class="meta-item" style="border-left:1px solid #eee; padding-left:1.5rem;">
+                <b>Origine</b>
+                <span>{{ objet.origine ?? 'Non spécifiée' }}</span>
+            </div>
+            <div class="meta-item" style="border-left:1px solid #eee; padding-left:1.5rem;">
+                <b>Matériaux</b>
+                <span>{{ objet.materiaux ?? 'Non spécifiés' }}</span>
+            </div>
+        </div>
+
+        <div style="text-align:center;">
+            <button onclick="window.print()" class="btn-pdf no-print">
+                GÉNÉRER LA FICHE PATRIMOINE (PDF)
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

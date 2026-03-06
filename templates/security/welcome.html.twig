@@ -1,0 +1,159 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block breadcrumb %}
+    <span class="sep">/</span>
+    <span class="current">Accueil</span>
+{% endblock %}
+
+{% block extra_styles %}
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+.stat-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(99,102,241,0.1);
+    transform: translateY(-2px);
+}
+.stat-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.2rem; }
+.stat-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+.section-title {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); margin: 2rem 0 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.welcome-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 16px; padding: 2rem 2.5rem; margin-bottom: 2rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.welcome-banner h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.35rem; }
+.welcome-banner p { color: #94a3b8; font-size: 0.9rem; }
+.welcome-badge {
+    background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.3);
+    color: #a5b4fc; font-size: 0.75rem; font-weight: 700;
+    padding: 0.4rem 1rem; border-radius: 9999px; white-space: nowrap;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="welcome-banner">
+    <div>
+        <h1>Bienvenue, {{ email }} 👋</h1>
+        <p>Tableau de bord administrateur — OTEMPS</p>
+    </div>
+    <span class="welcome-badge">ADMIN</span>
+</div>
+
+<div class="section-title">Gestion principale</div>
+
+<div class="stat-grid">
+    <a href="{{ path('admin_event_index') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #818cf8);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Gestion</div>
+            <div class="stat-title">Événements</div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_user_index') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Gestion</div>
+            <div class="stat-title">Utilisateurs</div>
+        </div>
+    </a>
+
+    <a href="{{ path('app_events') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Frontend</div>
+            <div class="stat-title">Vue publique</div>
+        </div>
+    </a>
+</div>
+
+<div class="section-title">Patrimoine culturel</div>
+
+<div class="stat-grid">
+    <a href="{{ path('admin_categorie_index') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Patrimoine</div>
+            <div class="stat-title">Catégories</div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_objet_index') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Patrimoine</div>
+            <div class="stat-title">Objets</div>
+        </div>
+    </a>
+
+    <a href="{{ path('admin_media_index') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Patrimoine</div>
+            <div class="stat-title">Médias</div>
+        </div>
+    </a>
+
+    <a href="{{ path('front_home') }}" class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #c5a059, #92713a);">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="stat-label">Frontend</div>
+            <div class="stat-title">Galerie publique</div>
+        </div>
+    </a>
+</div>
+
+{% endblock %}

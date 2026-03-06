@@ -19,9 +19,9 @@ class Participation
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'participations')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateurs::class, inversedBy: 'participations')]
+    #[ORM\JoinColumn(name: 'user_utilisateur_id', nullable: false)]
+    private ?Utilisateurs $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateInscription = null;
@@ -51,12 +51,12 @@ class Participation
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?Utilisateurs
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?Utilisateurs $user): static
     {
         $this->user = $user;
         return $this;

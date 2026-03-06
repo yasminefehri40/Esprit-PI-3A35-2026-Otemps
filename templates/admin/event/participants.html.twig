@@ -124,9 +124,9 @@
                 <tr>
                     <td>
                         <div class="user-cell">
-                            <div class="user-avatar">{{ participation.user.name|slice(0,1)|upper }}</div>
+                            <div class="user-avatar">{{ (participation.user.nom ~ ' ' ~ participation.user.prenom)|slice(0,1)|upper }}</div>
                             <div>
-                                <div class="user-name">{{ participation.user.name }}</div>
+                                <div class="user-name">{{ participation.user.nom ~ ' ' ~ participation.user.prenom }}</div>
                                 <div class="user-email">{{ participation.user.email }}</div>
                             </div>
                         </div>

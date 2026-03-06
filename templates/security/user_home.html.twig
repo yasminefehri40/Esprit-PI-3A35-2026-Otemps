@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - OTEMPS{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-title">
+                        <h1>OTEMPS</h1>
+                        <p>Valorisation du Patrimoine Culturel</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <a href="{{ path('app_logout') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(to right, #d97706, #ea580c); color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div style="display: flex; min-height: calc(100vh - 70px);">
+
+        {# Sidebar #}
+        <aside style="width: 260px; background: linear-gradient(180deg, #1c1917 0%, #292524 100%); padding: 2rem 0; flex-shrink: 0;">
+            <div style="padding: 0 1.5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #a8a29e; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 0.25rem;">Connecté en tant que</p>
+                <p style="color: #fef3c7; font-weight: 600; margin: 0; font-size: 0.95rem;">{{ user.email }}</p>
+                <span style="display: inline-block; margin-top: 0.4rem; background: #374151; color: #d1d5db; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 9999px;">MEMBRE</span>
+            </div>
+
+            <nav style="padding: 1.5rem 0;">
+                <a href="{{ path('app_user_home') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: #fef3c7; text-decoration: none; background: rgba(217,119,6,0.2); border-right: 3px solid #d97706; font-weight: 600; font-size: 0.9rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    </svg>
+                    Accueil
+                </a>
+                <a href="{{ path('app_events') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: #a8a29e; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.color='#fef3c7'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#a8a29e'; this.style.background='transparent';">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Événements
+                </a>
+                <a href="{{ path('front_home') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: #a8a29e; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.color='#fef3c7'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#a8a29e'; this.style.background='transparent';">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                    Galerie Patrimoine
+                </a>
+                <a href="{{ path('app_profile_events', {id: user.id}) }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; color: #a8a29e; text-decoration: none; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.color='#fef3c7'; this.style.background='rgba(255,255,255,0.05)';" onmouseout="this.style.color='#a8a29e'; this.style.background='transparent';">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Mes inscriptions
+                </a>
+            </nav>
+        </aside>
+
+        {# Main content #}
+        <main style="flex: 1; background: #faf9f7; padding: 2.5rem;">
+
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; color: #1c1917; margin: 0 0 0.25rem;">Bienvenue, {{ user.prenom }} {{ user.nom }} 👋</h2>
+                <p style="color: #6b7280; margin: 0;">Que souhaitez-vous explorer aujourd'hui ?</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+
+                <a href="{{ path('app_events') }}" style="background: white; border-radius: 0.75rem; padding: 2rem; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 1.25rem; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 28px rgba(0,0,0,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #d97706, #ea580c); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #1c1917; margin: 0 0 0.5rem;">Événements</p>
+                        <p style="color: #6b7280; font-size: 0.9rem; margin: 0; line-height: 1.5;">Découvrez et inscrivez-vous à nos parcours de découverte, ateliers culturels et événements thématiques.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; color: #d97706; font-weight: 600; font-size: 0.875rem;">
+                        Voir les événements
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{{ path('front_home') }}" style="background: white; border-radius: 0.75rem; padding: 2rem; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 1.25rem; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 28px rgba(0,0,0,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #c5a059, #92713a); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #1c1917; margin: 0 0 0.5rem;">Galerie Patrimoine</p>
+                        <p style="color: #6b7280; font-size: 0.9rem; margin: 0; line-height: 1.5;">Explorez notre collection d'objets patrimoniaux classés par catégories. Générez des fiches PDF pour chaque pièce.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; color: #c5a059; font-weight: 600; font-size: 0.875rem;">
+                        Explorer la galerie
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{{ path('app_profile_events', {id: user.id}) }}" style="background: white; border-radius: 0.75rem; padding: 2rem; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 1.25rem; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 28px rgba(0,0,0,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.08)';">
+                    <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #059669, #0d9488); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <p style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #1c1917; margin: 0 0 0.5rem;">Mes inscriptions</p>
+                        <p style="color: #6b7280; font-size: 0.9rem; margin: 0; line-height: 1.5;">Consultez et gérez vos participations aux événements. Confirmez ou annulez vos inscriptions.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; color: #059669; font-weight: 600; font-size: 0.875rem;">
+                        Voir mes participations
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </a>
+
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2026 OTEMPS - Tous droits réservés</p>
+            <p>Préservation du patrimoine culturel matériel et immatériel</p>
+        </div>
+    </footer>
+{% endblock %}

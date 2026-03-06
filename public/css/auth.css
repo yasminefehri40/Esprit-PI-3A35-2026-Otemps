@@ -1,0 +1,230 @@
+
+
+
+/* Carte du formulaire */
+.auth-container {
+    width: 100%;
+    max-width: 360px; /* PLUS PETIT */
+    background: #ffffff;
+    padding: 24px 26px; /* moins d’espace */
+    border-radius: 10px;
+    
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Titre */
+.auth-container h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Champs */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 9px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    transition: 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Bouton */
+.auth-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.auth-btn:hover {
+    background: #1e40af;
+}
+
+/* Footer */
+.auth-footer {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.auth-footer a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Erreurs */
+.form-group ul {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.form-group li {
+    font-size: 12px;
+    color: #dc2626;
+}
+.auth-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.auth-footer p {
+    margin-bottom: 8px;
+}
+
+.auth-login-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.auth-login-btn:hover {
+    background-color: #5a6268;
+}
+#form_register {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#form_register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+#form_register:active {
+    transform: translateY(0);
+}
+/* public/css/auth.css */
+
+/* Style général de la page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Titre */
+h1, h2 {
+    color: #333;
+    text-align: center;
+}
+
+/* Formulaire classique */
+form {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+/* Champs du formulaire */
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Boutons */
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Message d’erreur */
+p {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Vidéo FaceID */
+video {
+    display: block;
+    margin: 0 auto 10px auto;
+    border-radius: 10px;
+    border: 2px solid #007BFF;
+}
+
+/* Canvas caché */
+canvas {
+    display: none;
+}
+
+/* Bouton FaceID */
+#captureBtn {
+    background-color: #28a745;
+    margin-top: 10px;
+}
+
+#captureBtn:hover {
+    background-color: #1e7e34;
+}
